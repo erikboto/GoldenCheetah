@@ -25,6 +25,7 @@
 #include "BlankState.h"
 #include "TrainDB.h"
 #include "ComparePane.h"
+#include "TrainIntensityAdjustment.h"
 
 AnalysisView::AnalysisView(Context *context, QStackedWidget *controls) : TabView(context, VIEW_ANALYSIS)
 {
@@ -189,6 +190,9 @@ TrainView::TrainView(Context *context, QStackedWidget *controls) : TabView(conte
     setSidebar(trainTool->controls());
     setPage(t);
     setBlank(b);
+
+    trainIntensity = new TrainIntensityAdjustment(trainTool, this);
+    this->setBottom(trainIntensity);
 
     p = new QDialog(NULL);
     QVBoxLayout *m = new QVBoxLayout(p);

@@ -300,16 +300,6 @@ TrainSidebar::TrainSidebar(Context *context) : GcWindow(context), context(contex
     slideLayout->setContentsMargins(0,0,0,0);
     toolallbuttons->addLayout(slideLayout);
 
-    intensitySlider = new QSlider(Qt::Horizontal, this);
-    intensitySlider->setAutoFillBackground(false);
-    intensitySlider->setFocusPolicy(Qt::NoFocus);
-    intensitySlider->setMinimum(75);
-    intensitySlider->setMaximum(125);
-    intensitySlider->setValue(100);
-    slideLayout->addStretch();
-    slideLayout->addWidget(intensitySlider);
-    intensitySlider->hide(); // FIXME: XXX!!! temporary
-
 #ifdef Q_OS_MAC
 #if QT_VERSION > 0x5000
     QStyle *macstyler = QStyleFactory::create("fusion");
@@ -357,7 +347,6 @@ intensity->hide(); //XXX!!! temporary
     connect(rewind, SIGNAL(clicked()), this, SLOT(Rewind()));
     connect(lap, SIGNAL(clicked()), this, SLOT(newLap()));
     connect(context, SIGNAL(newLap()), this, SLOT(resetLapTimer()));
-    connect(intensitySlider, SIGNAL(valueChanged(int)), this, SLOT(adjustIntensity()));
 
     // not used but kept in case re-instated in the future
     recordSelector = new QCheckBox(this);
@@ -791,8 +780,7 @@ TrainSidebar::workoutTreeWidgetSelectionChanged()
             // setup the course profile in the
             // display!
             context->notifyErgFileSelected(ergFile);
-            intensitySlider->setValue(100);
-            lastAppliedIntensity = 100;
+            adjustIntensity(100);
             setLabels();
         } else {
 
@@ -1300,8 +1288,8 @@ void TrainSidebar::Stop(int deviceStatus)        // when stop button is pressed
     }
 
     // get back to normal after it may have been adusted by the user
-    lastAppliedIntensity=100;
-    intensitySlider->setValue(100);
+    //lastAppliedIntensity=100;
+    adjustIntensity(100);
     if (context->currentErgFile()) context->currentErgFile()->reload();
     context->notifySetNow(load_msecs);
 
@@ -1787,7 +1775,7 @@ void TrainSidebar::Higher()
 
     if (context->currentErgFile()) {
         // adjust the workout IF
-        intensitySlider->setValue(intensitySlider->value()+5);
+        adjustIntensity(lastAppliedIntensity+5);
 
     } else {
         if (status&RT_MODE_ERGO) load += 5;
@@ -1803,14 +1791,14 @@ void TrainSidebar::Higher()
     }
 }
 
-// higher load/gradient
+// lower load/gradient
 void TrainSidebar::Lower()
 {
     if ((status&RT_RUNNING) == 0) return;
 
     if (context->currentErgFile()) {
         // adjust the workout IF
-        intensitySlider->setValue(intensitySlider->value()-5);
+        adjustIntensity(lastAppliedIntensity-5);
 
     } else {
 
@@ -1827,11 +1815,58 @@ void TrainSidebar::Lower()
     }
 }
 
+// much higher load/gradient
+void TrainSidebar::HigherBigStep()
+{
+    if ((status&RT_RUNNING) == 0) return;
+
+    if (context->currentErgFile()) {
+        // adjust the workout IF
+        adjustIntensity(lastAppliedIntensity+10);
+
+    } else {
+        if (status&RT_MODE_ERGO) load += 20;
+        else slope += 0.5;
+
+        if (load >1500) load = 1500;
+        if (slope >15) slope = 15;
+
+        if (status&RT_MODE_ERGO)
+            foreach(int dev, devices()) Devices[dev].controller->setLoad(load);
+        else
+            foreach(int dev, devices()) Devices[dev].controller->setGradient(slope);
+    }
+}
+
+
+// much lower load/gradient
+void TrainSidebar::LowerBigStep()
+{
+    if ((status&RT_RUNNING) == 0) return;
+
+    if (context->currentErgFile()) {
+        // adjust the workout IF
+        adjustIntensity(lastAppliedIntensity-10);
+
+    } else {
+
+        if (status&RT_MODE_ERGO) load -= 20;
+        else slope -= 0.5;
+
+        if (load <0) load = 0;
+        if (slope <-10) slope = -10;
+
+        if (status&RT_MODE_ERGO)
+            foreach(int dev, devices()) Devices[dev].controller->setLoad(load);
+        else
+            foreach(int dev, devices()) Devices[dev].controller->setGradient(slope);
+    }
+}
+
+
 void TrainSidebar::setLabels()
 {
     if (context->currentErgFile()) {
-
-        //intensitySlider->show();//XXX!!! temporary
 
         if (context->currentErgFile()->format == CRS) {
 
@@ -1845,27 +1880,30 @@ void TrainSidebar::setLabels()
         }
 
     } else {
-
-        intensitySlider->hide();
         stress->setText("");
         intensity->setText("");
     }
 }
 
-void TrainSidebar::adjustIntensity()
+void TrainSidebar::adjustIntensity(int value)
 {
+    if (value == lastAppliedIntensity)
+    {
+        return;
+    }
+
     if (!context->currentErgFile()) return; // no workout selected
 
     // block signals temporarily
     context->mainWindow->blockSignals(true);
 
     // work through the ergFile from NOW
-    // adjusting back from last intensity setting
+    // adjusting back from last setting
     // and increasing to new intensity setting
 
     double from = double(lastAppliedIntensity) / 100.00;
-    double to = double(intensitySlider->value()) / 100.00;
-    lastAppliedIntensity = intensitySlider->value();
+    double to = double(value) / 100.00;
+    lastAppliedIntensity = value;
 
     long starttime = context->getNow();
 
@@ -1921,6 +1959,8 @@ void TrainSidebar::adjustIntensity()
 
     // force replot
     context->notifySetNow(context->getNow());
+
+    emit intensityChanged(lastAppliedIntensity);
 }
 
 MultiDeviceDialog::MultiDeviceDialog(Context *, TrainSidebar *traintool) : traintool(traintool)

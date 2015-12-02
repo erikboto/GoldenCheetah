@@ -733,6 +733,7 @@ HEADERS  += \
         TPUpload.h \
         TrainDB.h \
         TrainingstagebuchUploader.h \
+        TrainIntensityAdjustment.h \
         TrainSidebar.h \
         TreeMapPlot.h \
         TreeMapWindow.h \
@@ -998,6 +999,7 @@ SOURCES += \
         TPUploadDialog.cpp \
         TrainDB.cpp \
         TrainingstagebuchUploader.cpp \
+        TrainIntensityAdjustment.cpp \
         TrainSidebar.cpp \
         TreeMapPlot.cpp \
         TreeMapWindow.cpp \

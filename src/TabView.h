@@ -84,6 +84,8 @@ class TabView : public QWidget
 
         void saveState() { if (page_) page_->saveState(); }
 
+        int viewType() { return type; }
+
     signals:
 
         void sidebarClosed(); // the user dragged the sidebar closed.
@@ -158,6 +160,13 @@ public:
 
 protected:
     QSplitterHandle *createHandle() {
+        if (this->tabView)
+        {
+            if (this->tabView->viewType() == VIEW_TRAIN)
+            {
+                return new GcSplitterHandle(name, orientation, NULL, NULL, NULL, this);
+            }
+        }
         return new GcSplitterHandle(name, orientation, NULL, newclear(), newtoggle(), this);
     }
     int handleWidth() { return 23; };

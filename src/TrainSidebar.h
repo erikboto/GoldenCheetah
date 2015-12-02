@@ -76,6 +76,7 @@ class NullController;
 class RealtimePlot;
 class RealtimeData;
 class MultiDeviceDialog;
+class TrainIntensityAdjustment;
 
 class TrainSidebar : public GcWindow
 {
@@ -126,6 +127,7 @@ class TrainSidebar : public GcWindow
         void start();
         void pause();
         void stop();
+        void intensityChanged(int value);
 
     private slots:
         void deviceTreeWidgetSelectionChanged();
@@ -167,6 +169,8 @@ class TrainSidebar : public GcWindow
         void FFwdLap();     // jump forward to next Lap marker
         void Higher();      // set load/gradient higher
         void Lower();       // set load/gradient higher
+        void HigherBigStep(); // set load/gradient much higher
+        void LowerBigStep();  // set load/gradient much lower
         void newLap();      // start new Lap!
         void resetLapTimer(); //reset the lap timer
 
@@ -179,7 +183,7 @@ class TrainSidebar : public GcWindow
         void warnnoConfig();
 
         // User adjusted intensity
-        void adjustIntensity();     // Intensity of workout user adjusted
+        void adjustIntensity(int value);     // Intensity of workout user adjusted
 
         // slot for receiving remote control commands
         void remoteControl(uint16_t);
@@ -216,7 +220,6 @@ class TrainSidebar : public GcWindow
         // Panel buttons
         QPushButton *play;
         QLabel *stress, *intensity;
-        QSlider *intensitySlider;
         int lastAppliedIntensity;// remember how we scaled last time
 
         int FTP; // current FTP / CP

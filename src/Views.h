@@ -25,6 +25,7 @@ class AnalysisSidebar;
 class IntervalSidebar;
 class QDialog;
 class RideNavigator;
+class TrainIntensityAdjustment;
 
 class AnalysisView : public TabView
 {
@@ -86,6 +87,7 @@ class TrainView : public TabView
 
         TrainSidebar *trainTool;
         QDialog *p;
+        TrainIntensityAdjustment *trainIntensity;
 
 };
 
