@@ -217,6 +217,12 @@ TrainSidebar::TrainSidebar(Context *context) : GcWindow(context), context(contex
 #endif
 
     // TOOLBAR BUTTONS ETC
+
+    QVBoxLayout *toolbarRows = new QVBoxLayout; // For having multiple rows
+    toolbarRows->setContentsMargins(0,0,0,0);
+    toolbarRows->setSpacing(0);
+
+    // First row of toolbar buttons
     QHBoxLayout *toolallbuttons=new QHBoxLayout; // on toolbar
     toolallbuttons->setSpacing(0);
     toolallbuttons->setContentsMargins(0,0,0,0);
@@ -295,10 +301,31 @@ TrainSidebar::TrainSidebar(Context *context) : GcWindow(context), context(contex
     toolbuttons->addWidget(lap);
     toolbuttons->addStretch();
 
+    // Second row of toolbar
     QHBoxLayout *slideLayout = new QHBoxLayout;
     slideLayout->setSpacing(0);
     slideLayout->setContentsMargins(0,0,0,0);
-    toolallbuttons->addLayout(slideLayout);
+    slideLayout->addStretch();
+
+    QIcon dupIcon(":images/oxygen/up-arrow-double-bw.png");
+    QPushButton *loadDup = new QPushButton(dupIcon, "", this);
+    loadDup->setFocusPolicy(Qt::NoFocus);
+    loadDup->setIconSize(QSize(64,64));
+    loadDup->setAutoFillBackground(false);
+    loadDup->setAutoDefault(false);
+    loadDup->setFlat(true);
+    loadDup->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;");
+    slideLayout->addWidget(loadDup);
+
+    QIcon upIcon(":images/oxygen/up-arrow-bw.png");
+    QPushButton *loadUp = new QPushButton(upIcon, "", this);
+    loadUp->setFocusPolicy(Qt::NoFocus);
+    loadUp->setIconSize(QSize(64,64));
+    loadUp->setAutoFillBackground(false);
+    loadUp->setAutoDefault(false);
+    loadUp->setFlat(true);
+    loadUp->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;");
+    slideLayout->addWidget(loadUp);
 
     intensitySlider = new QSlider(Qt::Horizontal, this);
     intensitySlider->setAutoFillBackground(false);
@@ -306,9 +333,29 @@ TrainSidebar::TrainSidebar(Context *context) : GcWindow(context), context(contex
     intensitySlider->setMinimum(75);
     intensitySlider->setMaximum(125);
     intensitySlider->setValue(100);
-    slideLayout->addStretch();
     slideLayout->addWidget(intensitySlider);
-intensitySlider->hide(); //XXX!!! temporary
+    intensitySlider->hide(); //XXX!!! temporary
+
+    QIcon downIcon(":images/oxygen/down-arrow-bw.png");
+    QPushButton *loadDown = new QPushButton(downIcon, "", this);
+    loadDown->setFocusPolicy(Qt::NoFocus);
+    loadDown->setIconSize(QSize(64,64));
+    loadDown->setAutoFillBackground(false);
+    loadDown->setAutoDefault(false);
+    loadDown->setFlat(true);
+    loadDown->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;");
+    slideLayout->addWidget(loadDown);
+
+    QIcon ddownIcon(":images/oxygen/down-arrow-double-bw.png");
+    QPushButton *loadDdown = new QPushButton(ddownIcon, "", this);
+    loadDdown->setFocusPolicy(Qt::NoFocus);
+    loadDdown->setIconSize(QSize(64,64));
+    loadDdown->setAutoFillBackground(false);
+    loadDdown->setAutoDefault(false);
+    loadDdown->setFlat(true);
+    loadDdown->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;");
+    slideLayout->addWidget(loadDdown);
+    slideLayout->addStretch();
 
 #ifdef Q_OS_MAC
 #if QT_VERSION > 0x5000
@@ -330,7 +377,7 @@ intensitySlider->hide(); //XXX!!! temporary
     stress->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
     pal.setColor(stress->foregroundRole(), Qt::white);
     stress->setPalette(pal);
-stress->hide(); //XXX!!! temporary
+    stress->hide(); //XXX!!! temporary
 
     intensity = new QLabel(this);
     intensity->setAutoFillBackground(false);
@@ -338,18 +385,23 @@ stress->hide(); //XXX!!! temporary
     intensity->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
     pal.setColor(intensity->foregroundRole(), Qt::white);
     intensity->setPalette(pal);
-intensity->hide(); //XXX!!! temporary
+    intensity->hide(); //XXX!!! temporary
 
-    slideLayout->addWidget(stress, Qt::AlignVCenter|Qt::AlignCenter);
-    slideLayout->addWidget(intensity, Qt::AlignVCenter|Qt::AlignCenter);
-    slideLayout->addStretch();
+    //slideLayout->addWidget(stress, Qt::AlignVCenter|Qt::AlignCenter);
+    //slideLayout->addWidget(intensity, Qt::AlignVCenter|Qt::AlignCenter);
+    //slideLayout->addStretch();
+
+    // Set up toolbar rows
+    toolbarRows->addLayout(toolallbuttons);
+    toolbarRows->addLayout(slideLayout);
+    toolbarRows->addStretch();
 
     toolbarButtons = new QWidget(this);
     toolbarButtons->setContentsMargins(0,0,0,0);
     toolbarButtons->setFocusPolicy(Qt::NoFocus);
     toolbarButtons->setAutoFillBackground(false);
     toolbarButtons->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;");
-    toolbarButtons->setLayout(toolallbuttons);
+    toolbarButtons->setLayout(toolbarRows);
 
     connect(play, SIGNAL(clicked()), this, SLOT(Start()));
     connect(stop, SIGNAL(clicked()), this, SLOT(Stop()));
@@ -358,6 +410,10 @@ intensity->hide(); //XXX!!! temporary
     connect(lap, SIGNAL(clicked()), this, SLOT(newLap()));
     connect(context, SIGNAL(newLap()), this, SLOT(resetLapTimer()));
     connect(intensitySlider, SIGNAL(valueChanged(int)), this, SLOT(adjustIntensity()));
+    connect(loadUp, SIGNAL(clicked()), this, SLOT(Higher()));
+    connect(loadDown, SIGNAL(clicked()), this, SLOT(Lower()));
+    connect(loadDup, SIGNAL(clicked()), this, SLOT(HigherBigStep()));
+    connect(loadDdown, SIGNAL(clicked()), this, SLOT(LowerBigStep()));
 
     // not used but kept in case re-instated in the future
     recordSelector = new QCheckBox(this);
@@ -1794,6 +1850,29 @@ void TrainSidebar::Higher()
 }
 
 // higher load/gradient
+void TrainSidebar::HigherBigStep()
+{
+    if ((status&RT_RUNNING) == 0) return;
+
+    if (context->currentErgFile()) {
+        // adjust the workout IF
+        intensitySlider->setValue(intensitySlider->value()+5);
+
+    } else {
+        if (status&RT_MODE_ERGO) load += 20;
+        else slope += 0.5;
+
+        if (load >1500) load = 1500;
+        if (slope >15) slope = 15;
+
+        if (status&RT_MODE_ERGO)
+            foreach(int dev, devices()) Devices[dev].controller->setLoad(load);
+        else
+            foreach(int dev, devices()) Devices[dev].controller->setGradient(slope);
+    }
+}
+
+// higher load/gradient
 void TrainSidebar::Lower()
 {
     if ((status&RT_RUNNING) == 0) return;
@@ -1817,11 +1896,35 @@ void TrainSidebar::Lower()
     }
 }
 
+// higher load/gradient
+void TrainSidebar::LowerBigStep()
+{
+    if ((status&RT_RUNNING) == 0) return;
+
+    if (context->currentErgFile()) {
+        // adjust the workout IF
+        intensitySlider->setValue(intensitySlider->value()-5);
+
+    } else {
+
+        if (status&RT_MODE_ERGO) load -= 20;
+        else slope -= 0.5;
+
+        if (load <0) load = 0;
+        if (slope <-10) slope = -10;
+
+        if (status&RT_MODE_ERGO)
+            foreach(int dev, devices()) Devices[dev].controller->setLoad(load);
+        else
+            foreach(int dev, devices()) Devices[dev].controller->setGradient(slope);
+    }
+}
+
 void TrainSidebar::setLabels()
 {
     if (context->currentErgFile()) {
 
-        //intensitySlider->show();//XXX!!! temporary
+        intensitySlider->show();//XXX!!! temporary
 
         if (context->currentErgFile()->format == CRS) {
 

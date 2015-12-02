@@ -163,7 +163,10 @@ class TrainSidebar : public GcWindow
         void Rewind();      // jump backwards when in a workout
         void FFwdLap();     // jump forward to next Lap marker
         void Higher();      // set load/gradient higher
-        void Lower();       // set load/gradient higher
+        void Lower();       // set load/gradient lower
+        void HigherBigStep();      // set load/gradient much higher
+        void LowerBigStep();       // set load/gradient much lower
+
         void newLap();      // start new Lap!
         void resetLapTimer(); //reset the lap timer
 
