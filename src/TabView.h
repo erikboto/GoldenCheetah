@@ -73,8 +73,11 @@ class TabView : public QWidget
         // bottom
         void dragEvent(bool); // showbottom on drag event
         void setShowBottom(bool x);
+        void setBottomRequested(bool x);
         bool isShowBottom() { if (bottom_) return bottom_->isVisible(); return false; }
+        bool isBottomRequested() { return bottomRequested; }
         bool hasBottom() { return (bottom_!=NULL); }
+        void setHideBottomOnIdle(bool x);
 
         ViewSplitter *bottomSplitter() { return mainSplitter; }
 
@@ -133,6 +136,8 @@ class TabView : public QWidget
         int lastHeight; // last height of splitter, default to 100...
         int sidewidth; // width of sidebar
         bool active;
+        bool bottomRequested;
+        bool bottomHideOnIdle;
 
         QStackedWidget *stack;
         QSplitter *splitter;
@@ -143,6 +148,9 @@ class TabView : public QWidget
         HomeWindow *page_;
         BlankStatePage *blank_;
 
+    private slots:
+        void onIdle();
+        void onActive();
 };
 
 // we make our own view splitter for the bespoke handle

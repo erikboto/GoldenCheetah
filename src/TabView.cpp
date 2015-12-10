@@ -27,12 +27,14 @@
 #include "TrainDB.h"
 #include "RideNavigator.h"
 #include "MainWindow.h"
+#include "IdleTimer.h"
 
 #include "Settings.h"
 
 TabView::TabView(Context *context, int type) : 
     QWidget(context->tab), context(context), type(type),
-    _sidebar(true), _tiled(false), _selected(false), lastHeight(130), sidewidth(0), active(false),
+    _sidebar(true), _tiled(false), _selected(false), lastHeight(130), sidewidth(0),
+    active(false), bottomRequested(false), bottomHideOnIdle(false),
     stack(NULL), splitter(NULL), mainSplitter(NULL), 
     sidebar_(NULL), bottom_(NULL), page_(NULL), blank_(NULL)
 {
@@ -74,6 +76,8 @@ TabView::TabView(Context *context, int type) :
 
     connect(splitter,SIGNAL(splitterMoved(int,int)), this, SLOT(splitterMoved(int,int)));
     connect(context,SIGNAL(configChanged(qint32)), this, SLOT(configChanged(qint32)));
+    connect(&IdleTimer::getInstance(), SIGNAL(userIdle()), this, SLOT(onIdle()));
+    connect(&IdleTimer::getInstance(), SIGNAL(userActive()), this, SLOT(onActive()));
 }
 
 TabView::~TabView()
@@ -297,6 +301,11 @@ TabView::dragEvent(bool x)
 void
 TabView::setShowBottom(bool x) 
 {
+    if (x == isShowBottom())
+    {
+        return;
+    }
+
     // remember last height used when hidind
     if (!x && bottom_) lastHeight = bottom_->height();
 
@@ -442,4 +451,35 @@ void
 TabView::checkBlank()
 {
     selectionChanged(); // run through the code again
+}
+
+void
+TabView::setBottomRequested(bool x)
+{
+    bottomRequested = x;
+    setShowBottom(x);
+}
+
+void
+TabView::setHideBottomOnIdle(bool x)
+{
+    bottomHideOnIdle = x;
+}
+
+void
+TabView::onIdle()
+{
+    if (bottomHideOnIdle)
+    {
+        setShowBottom(false);
+    }
+}
+
+void
+TabView::onActive()
+{
+    if (bottomRequested)
+    {
+        setShowBottom(true);
+    }
 }

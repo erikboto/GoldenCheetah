@@ -87,7 +87,6 @@ class TrainView : public TabView
 
         TrainSidebar *trainTool;
         TrainIntensityAdjustment *trainIntensity;
-
 };
 
 class HomeView : public TabView

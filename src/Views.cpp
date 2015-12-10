@@ -192,7 +192,8 @@ TrainView::TrainView(Context *context, QStackedWidget *controls) : TabView(conte
     setBlank(b);
 
     trainIntensity = new TrainIntensityAdjustment(trainTool, this);
-    this->setBottom(trainIntensity);
+    setBottom(trainIntensity);
+    setHideBottomOnIdle(true);
 
     connect(this, SIGNAL(onSelectionChanged()), this, SLOT(onSelectionChanged()));
 }
@@ -218,6 +219,6 @@ void
 TrainView::onSelectionChanged()
 {
     if (isSelected()) {
-        setShowBottom(true);
+        setBottomRequested(true);
     }
 }

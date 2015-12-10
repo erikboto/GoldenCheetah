@@ -608,6 +608,7 @@ HEADERS  += \
         HrPwPlot.h \
         HrPwWindow.h \
         HrZones.h \
+        IdleTimer.h \
         IndendPlotMarker.h \
         IntervalItem.h \
         IntervalSummaryWindow.h \
@@ -872,6 +873,7 @@ SOURCES += \
         HrPwWindow.cpp \
         HrTimeInZone.cpp \
         HrZones.cpp \
+        IdleTimer.cpp \
         IndendPlotMarker.cpp \
         IntervalItem.cpp \
         IntervalSummaryWindow.cpp \
