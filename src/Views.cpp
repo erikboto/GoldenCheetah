@@ -194,13 +194,6 @@ TrainView::TrainView(Context *context, QStackedWidget *controls) : TabView(conte
     trainIntensity = new TrainIntensityAdjustment(trainTool, this);
     this->setBottom(trainIntensity);
 
-    p = new QDialog(NULL);
-    QVBoxLayout *m = new QVBoxLayout(p);
-    m->addWidget(trainTool->getToolbarButtons());
-    trainTool->getToolbarButtons()->show();
-    p->setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::Tool);
-    p->hide();
-
     connect(this, SIGNAL(onSelectionChanged()), this, SLOT(onSelectionChanged()));
 }
 
@@ -212,7 +205,6 @@ void
 TrainView::close()
 {
     trainTool->Stop();
-    p->close();
 }
 
 bool
@@ -226,8 +218,6 @@ void
 TrainView::onSelectionChanged()
 {
     if (isSelected()) {
-        p->show();
-    } else {
-        p->hide();
+        setShowBottom(true);
     }
 }

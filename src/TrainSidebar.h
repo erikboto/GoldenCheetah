@@ -110,9 +110,6 @@ class TrainSidebar : public GcWindow
         // this
         QTabWidget  *trainTabs;
 
-        // get the panel
-        QWidget *getToolbarButtons() { return toolbarButtons; }
-
         // where to get telemetry from Device.at(x)
         int bpmTelemetry;   // Heartrate
         int wattsTelemetry; // Power (and AltPower)
@@ -120,6 +117,7 @@ class TrainSidebar : public GcWindow
         int kphTelemetry;   // Speed (and Distance)
 
         RemoteControl *remote;      // remote control settings
+        int currentStatus() {return status;}
 
     signals:
 
@@ -198,8 +196,6 @@ class TrainSidebar : public GcWindow
                        *videosyncItem,
                        *mediaItem;
 
-        QWidget *toolbarButtons;
-
         QSqlTableModel *videoModel;
         QSqlTableModel *videosyncModel;
         QSqlTableModel *workoutModel;
@@ -217,9 +213,6 @@ class TrainSidebar : public GcWindow
         QTreeWidgetItem *videosync;
         QTreeWidgetItem *media;
 
-        // Panel buttons
-        QPushButton *play;
-        QLabel *stress, *intensity;
         int lastAppliedIntensity;// remember how we scaled last time
 
         int FTP; // current FTP / CP

@@ -61,7 +61,7 @@ TabView::TabView(Context *context, int type) :
 
     QString heading = tr("Compare Activities and Intervals");
     if (type == VIEW_HOME) heading = tr("Compare Date Ranges");
-    else if (type == VIEW_TRAIN) heading = tr("Intensity Adjustments");
+    else if (type == VIEW_TRAIN) heading = tr("Intensity Adjustments and Workout Control");
 
     mainSplitter = new ViewSplitter(Qt::Vertical, heading, this);
     mainSplitter->setHandleWidth(23);

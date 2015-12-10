@@ -27,7 +27,7 @@ TrainIntensityAdjustment::TrainIntensityAdjustment(TrainSidebar *trainSidebar, Q
     QWidget(parent),
     m_trainSidebar(trainSidebar)
 {
-    QHBoxLayout *layout = new QHBoxLayout();
+    QHBoxLayout *intensityControlLayout = new QHBoxLayout();
 
     QIcon dupIcon(":images/oxygen/up-arrow-double-bw.png");
     QPushButton *loadDup = new QPushButton(dupIcon, "", this);
@@ -72,15 +72,14 @@ TrainIntensityAdjustment::TrainIntensityAdjustment(TrainSidebar *trainSidebar, Q
     intensitySlider->setMaximum(125);
     intensitySlider->setValue(100);
 
-    layout->addWidget(loadDup);
-    layout->addWidget(loadUp);
-    layout->addWidget(intensitySlider);
-    layout->addWidget(loadDown);
-    layout->addWidget(loadDdown);
+    intensityControlLayout->addWidget(loadDup);
+    intensityControlLayout->addWidget(loadUp);
+    intensityControlLayout->addWidget(intensitySlider);
+    intensityControlLayout->addWidget(loadDown);
+    intensityControlLayout->addWidget(loadDdown);
 
-    layout->setContentsMargins(0,0,0,0);
-    layout->setSpacing(0);
-    layout->addStretch();
+    intensityControlLayout->setContentsMargins(0,0,0,0);
+    intensityControlLayout->setSpacing(0);
 
     connect(loadUp, SIGNAL(clicked()), m_trainSidebar, SLOT(Higher()));
     connect(loadDup, SIGNAL(clicked()), m_trainSidebar, SLOT(HigherBigStep()));
@@ -89,10 +88,117 @@ TrainIntensityAdjustment::TrainIntensityAdjustment(TrainSidebar *trainSidebar, Q
     connect(intensitySlider, SIGNAL(valueChanged(int)), m_trainSidebar, SLOT(adjustIntensity(int)));
     connect(m_trainSidebar, SIGNAL(intensityChanged(int)), intensitySlider, SLOT(setValue(int)));
 
+
+    // Control buttons
+    QHBoxLayout *toolbuttons = new QHBoxLayout;
+    toolbuttons->setSpacing(0);
+    toolbuttons->setContentsMargins(0,0,0,0);
+    toolbuttons->addStretch();
+
+    QIcon rewIcon(":images/oxygen/rewind.png");
+    QPushButton *rewind = new QPushButton(rewIcon, "", this);
+    rewind->setFocusPolicy(Qt::NoFocus);
+    rewind->setIconSize(QSize(64,64));
+    rewind->setAutoFillBackground(false);
+    rewind->setAutoDefault(false);
+    rewind->setFlat(true);
+    rewind->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;");
+    rewind->setAutoRepeat(true);
+    rewind->setAutoRepeatDelay(200);
+#if QT_VERSION > 0x050400
+    rewind->setShortcut(Qt::Key_MediaPrevious);
+#endif
+    toolbuttons->addWidget(rewind);
+
+    QIcon stopIcon(":images/oxygen/stop.png");
+    QPushButton *stop = new QPushButton(stopIcon, "", this);
+    stop->setFocusPolicy(Qt::NoFocus);
+    stop->setIconSize(QSize(64,64));
+    stop->setAutoFillBackground(false);
+    stop->setAutoDefault(false);
+    stop->setFlat(true);
+    stop->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;");
+#if QT_VERSION > 0x050400
+    stop->setShortcut(Qt::Key_MediaStop);
+#endif
+    toolbuttons->addWidget(stop);
+
+    QIcon playIcon(":images/oxygen/play.png");
+    m_playButton = new QPushButton(playIcon, "", this);
+    m_playButton->setFocusPolicy(Qt::NoFocus);
+    m_playButton->setIconSize(QSize(64,64));
+    m_playButton->setAutoFillBackground(false);
+    m_playButton->setAutoDefault(false);
+    m_playButton->setFlat(true);
+    m_playButton->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;");
+    m_playButton->setShortcut(Qt::Key_MediaTogglePlayPause);
+    toolbuttons->addWidget(m_playButton);
+
+    QIcon fwdIcon(":images/oxygen/ffwd.png");
+    QPushButton *forward = new QPushButton(fwdIcon, "", this);
+    forward->setFocusPolicy(Qt::NoFocus);
+    forward->setIconSize(QSize(64,64));
+    forward->setAutoFillBackground(false);
+    forward->setAutoDefault(false);
+    forward->setFlat(true);
+    forward->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;");
+    forward->setAutoRepeat(true);
+    forward->setAutoRepeatDelay(200);
+#if QT_VERSION > 0x050400
+    forward->setShortcut(Qt::Key_MediaNext);
+#endif
+    toolbuttons->addWidget(forward);
+
+    QIcon lapIcon(":images/oxygen/lap.png");
+    QPushButton *lap = new QPushButton(lapIcon, "", this);
+    lap->setFocusPolicy(Qt::NoFocus);
+    lap->setIconSize(QSize(64,64));
+    lap->setAutoFillBackground(false);
+    lap->setAutoDefault(false);
+    lap->setFlat(true);
+    lap->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;");
+#if QT_VERSION > 0x050400
+    lap->setShortcut(Qt::Key_0);
+#endif
+    toolbuttons->addWidget(lap);
+
+    QHBoxLayout *allControlsLayout = new QHBoxLayout();
+    allControlsLayout->addLayout(intensityControlLayout);
+    allControlsLayout->addLayout(toolbuttons);
+
+    connect(m_playButton, SIGNAL(clicked()), m_trainSidebar, SLOT(Start()));
+    connect(rewind, SIGNAL(clicked()), m_trainSidebar, SLOT(Rewind()));
+    connect(forward, SIGNAL(clicked()), m_trainSidebar, SLOT(FFwd()));
+    connect(lap, SIGNAL(clicked()), m_trainSidebar, SLOT(newLap()));
+    connect(stop, SIGNAL(clicked()), m_trainSidebar, SLOT(Stop()));
+    connect(m_trainSidebar->context, SIGNAL(start()), this, SLOT(updatePlayButtonIcon()));
+    connect(m_trainSidebar->context, SIGNAL(pause()), this, SLOT(updatePlayButtonIcon()));
+    connect(m_trainSidebar->context, SIGNAL(unpause()), this, SLOT(updatePlayButtonIcon()));
+    connect(m_trainSidebar->context, SIGNAL(stop()), this, SLOT(updatePlayButtonIcon()));
+
     this->setContentsMargins(0,0,0,0);
     this->setFocusPolicy(Qt::NoFocus);
     this->setAutoFillBackground(false);
     this->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;");
-    this->setLayout(layout);
+    this->setLayout(allControlsLayout);
 
+}
+
+void TrainIntensityAdjustment::updatePlayButtonIcon()
+{
+    static QIcon playIcon(":images/oxygen/play.png");
+    static QIcon pauseIcon(":images/oxygen/pause.png");
+
+    if (m_trainSidebar->currentStatus() & RT_PAUSED)
+    {
+        m_playButton->setIcon(playIcon);
+    }
+    else if (m_trainSidebar->currentStatus() & RT_RUNNING)
+    {
+        m_playButton->setIcon(pauseIcon);
+    }
+    else // Not running or paused means stopped
+    {
+        m_playButton->setIcon(playIcon);
+    }
 }

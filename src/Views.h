@@ -86,7 +86,6 @@ class TrainView : public TabView
     private:
 
         TrainSidebar *trainTool;
-        QDialog *p;
         TrainIntensityAdjustment *trainIntensity;
 
 };

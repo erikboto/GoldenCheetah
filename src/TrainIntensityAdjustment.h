@@ -22,6 +22,7 @@
 #include <QWidget>
 
 class TrainSidebar;
+class QPushButton;
 
 class TrainIntensityAdjustment : public QWidget
 {
@@ -30,10 +31,11 @@ class TrainIntensityAdjustment : public QWidget
 public:
     TrainIntensityAdjustment(TrainSidebar * trainSidebar, QWidget *parent = 0);
 private:
-    TrainSidebar * m_trainSidebar;
+    TrainSidebar *m_trainSidebar;
+    QPushButton *m_playButton;
 
 private slots:
-    //void adjustIntensity(int value);
+    void updatePlayButtonIcon();
 };
 
 #endif // _GC_TrainIntensityAdjustment_h
