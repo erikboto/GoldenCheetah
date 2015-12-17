@@ -187,9 +187,15 @@ unix:!macx {
 
 # FreeSearch replaces deprecated lucene
 HEADERS     += DataFilter.h SearchBox.h NamedSearch.h SearchFilterBox.h FreeSearch.h \
-    SportPlusHealthUploader.h
+    SportPlusHealthUploader.h \
+    Kettler.h \
+    KettlerController.h \
+    KettlerConnection.h
 SOURCES     += DataFilter.cpp SearchBox.cpp NamedSearch.cpp SearchFilterBox.cpp FreeSearch.cpp \
-    SportPlusHealthUploader.cpp
+    SportPlusHealthUploader.cpp \
+    KettlerConnection.cpp \
+    Kettler.cpp \
+    KettlerController.cpp
 YACCSOURCES += DataFilter.y
 LEXSOURCES  += DataFilter.l
 
