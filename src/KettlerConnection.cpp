@@ -198,9 +198,9 @@ void KettlerConnection::configurePort(QSerialPort *serialPort)
     {
         qFatal("Trying to configure null port, start debugging.");
     }
-    m_serial->setBaudRate(QSerialPort::Baud9600);
-    m_serial->setStopBits(QSerialPort::OneStop);
-    m_serial->setDataBits(QSerialPort::Data8);
-    m_serial->setFlowControl(QSerialPort::NoFlowControl);
-    m_serial->setParity(QSerialPort::NoParity);
+    serialPort->setBaudRate(QSerialPort::Baud9600);
+    serialPort->setStopBits(QSerialPort::OneStop);
+    serialPort->setDataBits(QSerialPort::Data8);
+    serialPort->setFlowControl(QSerialPort::NoFlowControl);
+    serialPort->setParity(QSerialPort::NoParity);
 }
