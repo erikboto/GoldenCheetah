@@ -72,11 +72,11 @@ TrainIntensityAdjustment::TrainIntensityAdjustment(TrainSidebar *trainSidebar, Q
     intensitySlider->setMaximum(125);
     intensitySlider->setValue(100);
 
-    intensityControlLayout->addWidget(loadDup);
-    intensityControlLayout->addWidget(loadUp);
-    intensityControlLayout->addWidget(intensitySlider);
-    intensityControlLayout->addWidget(loadDown);
     intensityControlLayout->addWidget(loadDdown);
+    intensityControlLayout->addWidget(loadDown);
+    intensityControlLayout->addWidget(intensitySlider);
+    intensityControlLayout->addWidget(loadUp);
+    intensityControlLayout->addWidget(loadDup);
 
     intensityControlLayout->setContentsMargins(0,0,0,0);
     intensityControlLayout->setSpacing(0);
@@ -93,7 +93,6 @@ TrainIntensityAdjustment::TrainIntensityAdjustment(TrainSidebar *trainSidebar, Q
     QHBoxLayout *toolbuttons = new QHBoxLayout;
     toolbuttons->setSpacing(0);
     toolbuttons->setContentsMargins(0,0,0,0);
-    toolbuttons->addStretch();
 
     QIcon rewIcon(":images/oxygen/rewind.png");
     QPushButton *rewind = new QPushButton(rewIcon, "", this);
@@ -161,10 +160,11 @@ TrainIntensityAdjustment::TrainIntensityAdjustment(TrainSidebar *trainSidebar, Q
     lap->setShortcut(Qt::Key_0);
 #endif
     toolbuttons->addWidget(lap);
+    toolbuttons->addStretch();
 
     QHBoxLayout *allControlsLayout = new QHBoxLayout();
-    allControlsLayout->addLayout(intensityControlLayout);
     allControlsLayout->addLayout(toolbuttons);
+    allControlsLayout->addLayout(intensityControlLayout);
 
     connect(m_playButton, SIGNAL(clicked()), m_trainSidebar, SLOT(Start()));
     connect(rewind, SIGNAL(clicked()), m_trainSidebar, SLOT(Rewind()));
