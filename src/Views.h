@@ -87,6 +87,9 @@ class TrainView : public TabView
 
         TrainSidebar *trainTool;
         TrainIntensityAdjustment *trainIntensity;
+
+private slots:
+        void onAutoHideChanged(bool enabled);
 };
 
 class HomeView : public TabView

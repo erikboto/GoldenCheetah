@@ -196,6 +196,12 @@ TrainView::TrainView(Context *context, QStackedWidget *controls) : TabView(conte
     setHideBottomOnIdle(false);
 
     connect(this, SIGNAL(onSelectionChanged()), this, SLOT(onSelectionChanged()));
+    connect(trainIntensity, SIGNAL(autoHideChanged(bool)), this, SLOT(onAutoHideChanged(bool)));
+}
+
+void TrainView::onAutoHideChanged(bool enabled)
+{
+    setHideBottomOnIdle(enabled);
 }
 
 TrainView::~TrainView()

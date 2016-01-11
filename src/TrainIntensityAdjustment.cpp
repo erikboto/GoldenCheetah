@@ -22,6 +22,7 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QSlider>
+#include <QCheckBox>
 
 TrainIntensityAdjustment::TrainIntensityAdjustment(TrainSidebar *trainSidebar, QWidget *parent) :
     QWidget(parent),
@@ -162,6 +163,10 @@ TrainIntensityAdjustment::TrainIntensityAdjustment(TrainSidebar *trainSidebar, Q
     toolbuttons->addWidget(lap);
     toolbuttons->addStretch();
 
+    QCheckBox *hideOnIdle = new QCheckBox(tr("Auto Hide"), this);
+    toolbuttons->addWidget(hideOnIdle);
+
+
     QHBoxLayout *allControlsLayout = new QHBoxLayout();
     allControlsLayout->addLayout(toolbuttons);
     allControlsLayout->addLayout(intensityControlLayout);
@@ -175,13 +180,13 @@ TrainIntensityAdjustment::TrainIntensityAdjustment(TrainSidebar *trainSidebar, Q
     connect(m_trainSidebar->context, SIGNAL(pause()), this, SLOT(updatePlayButtonIcon()));
     connect(m_trainSidebar->context, SIGNAL(unpause()), this, SLOT(updatePlayButtonIcon()));
     connect(m_trainSidebar->context, SIGNAL(stop()), this, SLOT(updatePlayButtonIcon()));
+    connect(hideOnIdle, SIGNAL(stateChanged(int)), this, SLOT(autoHideCheckboxChanged(int)));
 
     this->setContentsMargins(0,0,0,0);
     this->setFocusPolicy(Qt::NoFocus);
     this->setAutoFillBackground(false);
     this->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;");
     this->setLayout(allControlsLayout);
-
 }
 
 void TrainIntensityAdjustment::updatePlayButtonIcon()
@@ -201,4 +206,9 @@ void TrainIntensityAdjustment::updatePlayButtonIcon()
     {
         m_playButton->setIcon(playIcon);
     }
+}
+
+void TrainIntensityAdjustment::autoHideCheckboxChanged(int state)
+{
+    emit autoHideChanged(state == Qt::Checked);
 }

@@ -36,6 +36,10 @@ private:
 
 private slots:
     void updatePlayButtonIcon();
+    void autoHideCheckboxChanged(int state);
+
+signals:
+    void autoHideChanged(bool enabled);
 };
 
 #endif // _GC_TrainIntensityAdjustment_h
