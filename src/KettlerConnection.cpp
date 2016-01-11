@@ -140,6 +140,12 @@ void KettlerConnection::requestAll()
             {
                 emit cadence(newCadence);
             }
+
+            quint32 newSpeed = splits.at(2).toUInt(&ok);
+            if (ok)
+            {
+                emit speed(newSpeed/10);
+            }
         } else if (splits.size() > 8) {
             qDebug() << "Kettler: Faulty sample, larger than 8 splits.";
             failed = true;
