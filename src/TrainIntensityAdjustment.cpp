@@ -187,6 +187,8 @@ TrainIntensityAdjustment::TrainIntensityAdjustment(TrainSidebar *trainSidebar, Q
     this->setAutoFillBackground(false);
     this->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;");
     this->setLayout(allControlsLayout);
+
+    this->setFixedHeight(100);
 }
 
 void TrainIntensityAdjustment::updatePlayButtonIcon()
