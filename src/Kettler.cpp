@@ -31,6 +31,7 @@ Kettler::Kettler(QObject *parent,  QString devname) : QObject(parent),
     connect(&m_kettlerConnection, SIGNAL(power(quint32)), this, SLOT(newPower(quint32)), Qt::QueuedConnection);
     connect(&m_kettlerConnection, SIGNAL(cadence(quint32)), this, SLOT(newCadence(quint32)), Qt::QueuedConnection);
     connect(&m_kettlerConnection, SIGNAL(pulse(quint32)), this, SLOT(newHeartRate(quint32)), Qt::QueuedConnection);
+    connect(&m_kettlerConnection, SIGNAL(speed(double)), this, SLOT(newSpeed(double)), Qt::QueuedConnection);
     connect(&m_kettlerConnection, SIGNAL(finished()), this, SLOT(onKettlerConnectionFinished()), Qt::QueuedConnection);
 }
 
@@ -67,6 +68,11 @@ void Kettler::newHeartRate(quint32 heartRate)
 void Kettler::newPower(quint32 power)
 {
     m_power = power;
+}
+
+void Kettler::newSpeed(double speed)
+{
+    m_speed = speed;
 }
 
 /**
