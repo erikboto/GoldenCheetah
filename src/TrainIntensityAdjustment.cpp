@@ -30,16 +30,6 @@ TrainIntensityAdjustment::TrainIntensityAdjustment(TrainSidebar *trainSidebar, Q
 {
     QHBoxLayout *intensityControlLayout = new QHBoxLayout();
 
-    QIcon dupIcon(":images/oxygen/up-arrow-double-bw.png");
-    QPushButton *loadDup = new QPushButton(dupIcon, "", this);
-    loadDup->setFocusPolicy(Qt::NoFocus);
-    loadDup->setIconSize(QSize(64,64));
-    loadDup->setAutoFillBackground(false);
-    loadDup->setAutoDefault(false);
-    loadDup->setFlat(true);
-    loadDup->setAutoRepeat(true);
-    loadDup->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;");
-
     QIcon upIcon(":images/oxygen/up-arrow-bw.png");
     QPushButton *loadUp = new QPushButton(upIcon, "", this);
     loadUp->setFocusPolicy(Qt::NoFocus);
@@ -48,6 +38,10 @@ TrainIntensityAdjustment::TrainIntensityAdjustment(TrainSidebar *trainSidebar, Q
     loadUp->setAutoDefault(false);
     loadUp->setFlat(true);
     loadUp->setAutoRepeat(true);
+    loadUp->setAutoRepeatInterval(50);
+#if QT_VERSION > 0x050400
+    loadUp->setShortcut(Qt::Key_Plus);
+#endif
     loadUp->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;");
 
     QIcon downIcon(":images/oxygen/down-arrow-bw.png");
@@ -58,17 +52,11 @@ TrainIntensityAdjustment::TrainIntensityAdjustment(TrainSidebar *trainSidebar, Q
     loadDown->setAutoDefault(false);
     loadDown->setFlat(true);
     loadDown->setAutoRepeat(true);
-    loadDown->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;");
-
-    QIcon ddownIcon(":images/oxygen/down-arrow-double-bw.png");
-    QPushButton *loadDdown = new QPushButton(ddownIcon, "", this);
-    loadDdown->setFocusPolicy(Qt::NoFocus);
-    loadDdown->setIconSize(QSize(64,64));
-    loadDdown->setAutoFillBackground(false);
-    loadDdown->setAutoDefault(false);
-    loadDdown->setFlat(true);
-    loadDdown->setAutoRepeat(true);
-    loadDdown->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;");
+    loadDown->setAutoRepeatInterval(50);
+#if QT_VERSION > 0x050400
+    loadDown->setShortcut(Qt::Key_Minus);
+#endif
+    loadDown->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;"); 
 
     QSlider *intensitySlider = new QSlider(Qt::Horizontal, this);
     intensitySlider->setAutoFillBackground(false);
@@ -77,18 +65,14 @@ TrainIntensityAdjustment::TrainIntensityAdjustment(TrainSidebar *trainSidebar, Q
     intensitySlider->setMaximum(125);
     intensitySlider->setValue(100);
 
-    intensityControlLayout->addWidget(loadDdown);
     intensityControlLayout->addWidget(loadDown);
     intensityControlLayout->addWidget(intensitySlider);
     intensityControlLayout->addWidget(loadUp);
-    intensityControlLayout->addWidget(loadDup);
 
     intensityControlLayout->setContentsMargins(0,0,0,0);
     intensityControlLayout->setSpacing(0);
 
     connect(loadUp, SIGNAL(clicked()), m_trainSidebar, SLOT(Higher()));
-    connect(loadDup, SIGNAL(clicked()), m_trainSidebar, SLOT(HigherBigStep()));
-    connect(loadDdown, SIGNAL(clicked()), m_trainSidebar, SLOT(LowerBigStep()));
     connect(loadDown, SIGNAL(clicked()), m_trainSidebar, SLOT(Lower()));
     connect(intensitySlider, SIGNAL(valueChanged(int)), m_trainSidebar, SLOT(adjustIntensity(int)));
     connect(m_trainSidebar, SIGNAL(intensityChanged(int)), intensitySlider, SLOT(setValue(int)));

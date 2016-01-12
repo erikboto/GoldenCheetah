@@ -1673,55 +1673,6 @@ void TrainSidebar::Lower()
     }
 }
 
-// much higher load/gradient
-void TrainSidebar::HigherBigStep()
-{
-    if ((status&RT_RUNNING) == 0) return;
-
-    if (context->currentErgFile()) {
-        // adjust the workout IF
-        adjustIntensity(lastAppliedIntensity+10);
-
-    } else {
-        if (status&RT_MODE_ERGO) load += 20;
-        else slope += 0.5;
-
-        if (load >1500) load = 1500;
-        if (slope >15) slope = 15;
-
-        if (status&RT_MODE_ERGO)
-            foreach(int dev, devices()) Devices[dev].controller->setLoad(load);
-        else
-            foreach(int dev, devices()) Devices[dev].controller->setGradient(slope);
-    }
-}
-
-
-// much lower load/gradient
-void TrainSidebar::LowerBigStep()
-{
-    if ((status&RT_RUNNING) == 0) return;
-
-    if (context->currentErgFile()) {
-        // adjust the workout IF
-        adjustIntensity(lastAppliedIntensity-10);
-
-    } else {
-
-        if (status&RT_MODE_ERGO) load -= 20;
-        else slope -= 0.5;
-
-        if (load <0) load = 0;
-        if (slope <-10) slope = -10;
-
-        if (status&RT_MODE_ERGO)
-            foreach(int dev, devices()) Devices[dev].controller->setLoad(load);
-        else
-            foreach(int dev, devices()) Devices[dev].controller->setGradient(slope);
-    }
-}
-
-
 void TrainSidebar::setLabels()
 {
     /* should this be kept, or removed? Currently these are always hidden.

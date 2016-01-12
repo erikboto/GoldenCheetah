@@ -167,8 +167,6 @@ class TrainSidebar : public GcWindow
         void FFwdLap();     // jump forward to next Lap marker
         void Higher();      // set load/gradient higher
         void Lower();       // set load/gradient higher
-        void HigherBigStep(); // set load/gradient much higher
-        void LowerBigStep();  // set load/gradient much lower
         void newLap();      // start new Lap!
         void resetLapTimer(); //reset the lap timer
 
