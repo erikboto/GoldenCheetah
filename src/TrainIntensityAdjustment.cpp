@@ -37,6 +37,7 @@ TrainIntensityAdjustment::TrainIntensityAdjustment(TrainSidebar *trainSidebar, Q
     loadDup->setAutoFillBackground(false);
     loadDup->setAutoDefault(false);
     loadDup->setFlat(true);
+    loadDup->setAutoRepeat(true);
     loadDup->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;");
 
     QIcon upIcon(":images/oxygen/up-arrow-bw.png");
@@ -46,6 +47,7 @@ TrainIntensityAdjustment::TrainIntensityAdjustment(TrainSidebar *trainSidebar, Q
     loadUp->setAutoFillBackground(false);
     loadUp->setAutoDefault(false);
     loadUp->setFlat(true);
+    loadUp->setAutoRepeat(true);
     loadUp->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;");
 
     QIcon downIcon(":images/oxygen/down-arrow-bw.png");
@@ -55,6 +57,7 @@ TrainIntensityAdjustment::TrainIntensityAdjustment(TrainSidebar *trainSidebar, Q
     loadDown->setAutoFillBackground(false);
     loadDown->setAutoDefault(false);
     loadDown->setFlat(true);
+    loadDown->setAutoRepeat(true);
     loadDown->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;");
 
     QIcon ddownIcon(":images/oxygen/down-arrow-double-bw.png");
@@ -64,6 +67,7 @@ TrainIntensityAdjustment::TrainIntensityAdjustment(TrainSidebar *trainSidebar, Q
     loadDdown->setAutoFillBackground(false);
     loadDdown->setAutoDefault(false);
     loadDdown->setFlat(true);
+    loadDdown->setAutoRepeat(true);
     loadDdown->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;");
 
     QSlider *intensitySlider = new QSlider(Qt::Horizontal, this);
