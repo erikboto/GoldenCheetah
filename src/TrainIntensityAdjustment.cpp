@@ -58,16 +58,19 @@ TrainIntensityAdjustment::TrainIntensityAdjustment(TrainSidebar *trainSidebar, Q
 #endif
     loadDown->setStyleSheet("background-color: rgba( 255, 255, 255, 0% ); border: 0px;"); 
 
-    QSlider *intensitySlider = new QSlider(Qt::Horizontal, this);
+    QSlider *intensitySlider = new QSlider(Qt::Vertical, this);
     intensitySlider->setAutoFillBackground(false);
     intensitySlider->setFocusPolicy(Qt::NoFocus);
     intensitySlider->setMinimum(75);
     intensitySlider->setMaximum(125);
     intensitySlider->setValue(100);
 
-    intensityControlLayout->addWidget(loadDown);
+    intensityControlLayout->addSpacing(20);
     intensityControlLayout->addWidget(intensitySlider);
+    intensityControlLayout->addSpacing(20);
+    intensityControlLayout->addWidget(loadDown);
     intensityControlLayout->addWidget(loadUp);
+    intensityControlLayout->addStretch();
 
     intensityControlLayout->setContentsMargins(0,0,0,0);
     intensityControlLayout->setSpacing(0);
@@ -149,10 +152,9 @@ TrainIntensityAdjustment::TrainIntensityAdjustment(TrainSidebar *trainSidebar, Q
     lap->setShortcut(Qt::Key_0);
 #endif
     toolbuttons->addWidget(lap);
-    toolbuttons->addStretch();
 
     QCheckBox *hideOnIdle = new QCheckBox(tr("Auto Hide"), this);
-    toolbuttons->addWidget(hideOnIdle);
+    intensityControlLayout->addWidget(hideOnIdle);
 
 
     QHBoxLayout *allControlsLayout = new QHBoxLayout();
