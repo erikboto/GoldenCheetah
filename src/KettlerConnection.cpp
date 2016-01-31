@@ -20,6 +20,8 @@
 
 #include <QByteArray>
 #include <QDebug>
+#include <QFile>
+#include <QTextStream>
 
 KettlerConnection::KettlerConnection() :
     m_serial(0),
@@ -107,6 +109,15 @@ void KettlerConnection::requestAll()
     // Discard any existing data
     QByteArray discarded = m_serial->readAll();
 
+    static QFile logfile("kettler.txt");
+
+    if (!logfile.isOpen())
+    {
+        logfile.open(QFile::WriteOnly | QFile::Truncate);
+    }
+
+    QTextStream out(&logfile);
+
     m_serial->write("st\r\n");
     m_serial->waitForBytesWritten(1000);
 
@@ -126,6 +137,7 @@ void KettlerConnection::requestAll()
         QStringList splits = dataString.split(QRegExp("\\s"));
         if (splits.size() == 8)
         {
+            out << "Complete sample: " << dataString << "\n";
             completeReplyRead = true;
             bool ok;
 
@@ -148,12 +160,19 @@ void KettlerConnection::requestAll()
             }
 
             quint32 newPower = splits.at(7).toUInt(&ok);
+
+            foreach (QString s, splits)
+            {
+                out << "Split: " << s << "\n";
+            }
+
             if (ok)
             {
                 emit power(newPower);
             }
         } else if (splits.size() > 8) {
             qDebug() << "Kettler: Faulty sample, larger than 8 splits.";
+            out << "Faulty sample: " << dataString << "\n";
             failed = true;
         }
 
