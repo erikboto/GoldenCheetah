@@ -135,7 +135,7 @@ void KettlerConnection::requestAll()
 
         QString dataString = QString(data);
         QStringList splits = dataString.split(QRegExp("\\s"));
-        if (splits.size() == 8)
+        if (splits.size() == 8 && (data.endsWith('\n') || data.endsWith('\r')))
         {
             out << "Complete sample: " << dataString << "\n";
             completeReplyRead = true;
