@@ -130,6 +130,7 @@ void KettlerConnection::requestAll()
     QByteArray data;
     bool completeReplyRead = false;
     bool failed = false;
+    int maxRetries = 3;
     do
     {
         if (m_serial->waitForReadyRead(500))
@@ -141,7 +142,10 @@ void KettlerConnection::requestAll()
 
         QString dataString = QString(data);
         QStringList splits = dataString.split(QRegExp("\\s"));
-        if (splits.size() == 8)
+
+        // We need to make sure the last split is 3 chars long, otherwise we
+        // might have read a partial power value
+        if (splits.size() == 8 && (splits.at(7).length() == 3))
         {
             out << "Complete sample: " << dataString << "\n";
             completeReplyRead = true;
@@ -182,6 +186,10 @@ void KettlerConnection::requestAll()
             failed = true;
         }
 
+        if (--maxRetries == 0)
+        {
+            failed = true;
+        }
 
     } while (!completeReplyRead || failed);
 
@@ -209,17 +217,29 @@ void KettlerConnection::requestAll()
 
 void KettlerConnection::initializePcConnection()
 {
+    int maxRetries = 3;
+    bool success = false;
 
-    m_serial->write("cd\r\n");
-
-    if (!m_serial->waitForBytesWritten(500))
+    do
     {
-        // failure to write to device, bail out
+        // Set kettler into PC-mode, reply should be ACK or RUN
+        m_serial->write("cd\r\n");
+
+        QByteArray data;
+
+        if (m_serial->waitForReadyRead(500))
+        {
+            if (QString(data).contains("ACK") || QString(data).contains("RUN"))
+            {
+                success = true;
+            }
+        }
+    } while ((!success) && (--maxRetries != 0));
+
+    if (!success)
+    {
         this->exit(-1);
     }
-
-    // Discard any reply
-    QByteArray data = m_serial->readAll();
 
     setLoad(100);
 }
