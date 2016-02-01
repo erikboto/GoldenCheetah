@@ -106,9 +106,6 @@ void KettlerConnection::requestAll()
     if (! m_mutex.tryLock())
         return;
 
-    // Discard any existing data
-    QByteArray discarded = m_serial->readAll();
-
     static QFile logfile("kettler.txt");
 
     if (!logfile.isOpen())
@@ -116,7 +113,16 @@ void KettlerConnection::requestAll()
         logfile.open(QFile::WriteOnly | QFile::Truncate);
     }
 
+    // Discard any existing data
+    QByteArray discarded = m_serial->readAll();
+
+    discarded.append('\0');
+
     QTextStream out(&logfile);
+    out << "Discarded data: " << QString(discarded) << "\n";
+
+
+
 
     m_serial->write("st\r\n");
     m_serial->waitForBytesWritten(1000);
@@ -192,6 +198,10 @@ void KettlerConnection::requestAll()
 
         // Ignore reply
         QByteArray data = m_serial->readAll();
+
+        data.append('\0');
+
+        out << "Discarded reply from setting power: " << QString(data) << "\n";
     }
 
     m_mutex.unlock();
