@@ -225,6 +225,12 @@ void KettlerConnection::initializePcConnection()
         // Set kettler into PC-mode, reply should be ACK or RUN
         m_serial->write("cd\r\n");
 
+        if (!m_serial->waitForBytesWritten(500))
+        {
+            // failure to write to device, bail out
+            this->exit(-1);
+        }
+
         QByteArray data;
 
         if (m_serial->waitForReadyRead(500))
@@ -235,11 +241,6 @@ void KettlerConnection::initializePcConnection()
             }
         }
     } while ((!success) && (--maxRetries != 0));
-
-    if (!success)
-    {
-        this->exit(-1);
-    }
 
     setLoad(100);
 }
