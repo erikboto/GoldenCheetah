@@ -133,6 +133,7 @@ void KettlerConnection::requestAll()
     int maxRetries = 3;
     do
     {
+        out << "Attempting read with " << maxRetries << " attempts left\n";
         if (m_serial->waitForReadyRead(500))
         {
             data.append(m_serial->readAll());
@@ -143,9 +144,13 @@ void KettlerConnection::requestAll()
         QString dataString = QString(data);
         QStringList splits = dataString.split(QRegExp("\\s"));
 
+        out << "Read complete:" << dataString << "\n";
+        if (splits.size() == 8)
+            out << "Last split is:" << splits.at(7) << " with len" << splits.at(7).length() << "\n";
+
         // We need to make sure the last split is 3 chars long, otherwise we
         // might have read a partial power value
-        if (splits.size() == 8 && (splits.at(7).length() == 3))
+        if (splits.size() == 8 && (splits.at(7).length() >= 3))
         {
             out << "Complete sample: " << dataString << "\n";
             completeReplyRead = true;
