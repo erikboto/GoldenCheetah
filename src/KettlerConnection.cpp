@@ -218,10 +218,12 @@ void KettlerConnection::requestAll()
 void KettlerConnection::initializePcConnection()
 {
     int maxRetries = 3;
-    bool success = false;
+    bool keepTrying = false;
 
     do
     {
+        keepTrying = (--maxRetries != 0);
+
         // Set kettler into PC-mode, reply should be ACK or RUN
         m_serial->write("cd\r\n");
 
@@ -237,10 +239,12 @@ void KettlerConnection::initializePcConnection()
         {
             if (QString(data).contains("ACK") || QString(data).contains("RUN"))
             {
-                success = true;
+                keepTrying = false;
             }
         }
-    } while ((!success) && (--maxRetries != 0));
+
+
+    } while (keepTrying);
 
     setLoad(100);
 }
