@@ -135,6 +135,7 @@ void KettlerConnection::requestAll()
     int maxRetries = 3;
     do
     {
+        out << "Attempting read with " << maxRetries << " attempts left\n";
         if (m_serial->waitForReadyRead(500))
         {
             data.append(m_serial->readAll());
@@ -147,8 +148,13 @@ void KettlerConnection::requestAll()
         QString dataString = QString(data);
         QStringList splits = dataString.split(QRegExp("\\s"));
 
+        out << "Read complete:" << dataString << "\n";
+        if (splits.size() == 8)
+            out << "Last split is:" << splits.at(7) << " with len" << splits.at(7).length() << "\n";
+
         // We need to make sure the last split is 3 chars long, otherwise we
         // might have read a partial power value
+
         if (splits.size() >= 8 && (splits.at(7).length() >= 3))
         {
             out << "Complete sample: " << dataString << "\n";
@@ -289,22 +295,6 @@ void KettlerConnection::initializePcConnection()
 
     out << "Leaving " << __func__;
     setLoad(100);
-
-#if 0
-
-    m_serial->write("cd\r\n");
-
-    if (!m_serial->waitForBytesWritten(500))
-    {
-        // failure to write to device, bail out
-        this->exit(-1);
-    }
-
-    // Discard any reply
-    QByteArray data = m_serial->readAll();
-
-    setLoad(100);
-#endif
 }
 
 void KettlerConnection::setLoad(unsigned int load)
