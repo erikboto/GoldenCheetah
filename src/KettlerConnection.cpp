@@ -106,25 +106,8 @@ void KettlerConnection::requestAll()
     if (! m_mutex.tryLock())
         return;
 
-    static QFile logfile("kettler2.txt");
-
-    if (!logfile.isOpen())
-    {
-        logfile.open(QFile::WriteOnly | QFile::Truncate);
-        QTextStream out(&logfile);
-        out << "Logfile successfully opened";
-        out.flush();
-    }
-
     // Discard any existing data
     QByteArray discarded = m_serial->readAll();
-
-    discarded.append('\0');
-
-    QTextStream out(&logfile);
-    out << "Discarded data: " << QString(discarded) << "\n";
-    out.flush();
-
 
     m_serial->write("st\r\n");
     m_serial->waitForBytesWritten(1000);
@@ -135,30 +118,21 @@ void KettlerConnection::requestAll()
     int maxRetries = 3;
     do
     {
-        out << "Attempting read with " << maxRetries << " attempts left\n";
         if (m_serial->waitForReadyRead(500))
         {
             data.append(m_serial->readAll());
-            out << "Read ok";
         } else {
             failed = true;
-            out << "Read failed";
         }
 
         QString dataString = QString(data);
-        QStringList splits = dataString.split(QRegExp("\\s"));
-
-        out << "Read complete:" << dataString << "\n";
-        if (splits.size() == 8)
-            out << "Last split is:" << splits.at(7) << " with len" << splits.at(7).length() << "\n";
+        QStringList splits = dataString.split(QRegExp("\\s"));  
 
         // We need to make sure the last split is 3 chars long, otherwise we
         // might have read a partial power value
 
         if (splits.size() >= 8 && (splits.at(7).length() >= 3))
         {
-            out << "Complete sample: " << dataString << "\n";
-            out.flush();
             completeReplyRead = true;
             failed = false;
             bool ok;
@@ -166,58 +140,36 @@ void KettlerConnection::requestAll()
             quint32 newHeartrate = splits.at(0).toUInt(&ok);
             if (ok)
             {
-                out << "Heartrate: " << splits.at(0) << " " << newHeartrate << "\n";
                 emit pulse(newHeartrate);
             }
 
             quint32 newCadence = splits.at(1).toUInt(&ok);
             if (ok)
             {
-                out << "Cadence: " << splits.at(1) << " " << newCadence << "\n";
                 emit cadence(newCadence);
             }
 
             quint32 newSpeed = splits.at(2).toUInt(&ok);
             if (ok)
             {
-                out << "Speed: " << splits.at(2) << " " << newSpeed/10 << "\n";
                 emit speed(newSpeed/10);
             }
 
             quint32 newPower = splits.at(7).toUInt(&ok);
 
-            foreach (QString s, splits)
-            {
-                out << "Split: " << s << "\n";
-                out.flush();
-            }
-
             if (ok)
             {
-                out << "Power: " << splits.at(7) << " " << newPower << "\n";
-                out.flush();
                 emit power(newPower);
             }
         } else if (splits.size() > 8) {
             qDebug() << "Kettler: Faulty sample, larger than 8 splits.";
-            out << "Faulty sample: " << dataString << "\n";
-            out.flush();
             failed = true;
-        } else {
-            out << "Reached default else" << "\n";
-            out.flush();
         }
 
         if (--maxRetries == 0)
         {
             failed = true;
-            out << "Failed, bailing" << "\n";
-            out.flush();
         }
-
-        out << "Condition 1: " << !completeReplyRead;
-        out << "Condition 2: " << failed;
-        out << "Condition combined: " << ((!completeReplyRead) || failed);
     } while ((!completeReplyRead) || failed);
 
     if ((m_loadToWrite != m_load))
@@ -235,13 +187,8 @@ void KettlerConnection::requestAll()
         QByteArray data = m_serial->readAll();
 
         data.append('\0');
-
-        out << "Discarded reply from setting power: " << QString(data) << "\n";
-        logfile.flush();
     }
 
-    out << "Leaving " << __func__ << "\n";
-    out.flush();
     m_mutex.unlock();
 }
 
@@ -250,28 +197,15 @@ void KettlerConnection::initializePcConnection()
     int maxRetries = 3;
     bool keepTrying = false;
 
-    static QFile logfile("kettler_initializePcConnection.txt");
-
-    if (!logfile.isOpen())
-    {
-        logfile.open(QFile::WriteOnly | QFile::Truncate);
-    }
-
-    QTextStream out(&logfile);
-    out << "Starting " << __func__;
-
     do
     {
-        out << "Maxretries: " << maxRetries;
         keepTrying = (--maxRetries != 0);
-        out << "keepTrying: " << keepTrying;
 
         // Set kettler into PC-mode, reply should be ACK or RUN
         m_serial->write("cd\r\n");
 
         if (!m_serial->waitForBytesWritten(500))
         {
-            out << "Failed to write, exiting";
             // failure to write to device, bail out
             this->exit(-1);
         }
@@ -281,11 +215,8 @@ void KettlerConnection::initializePcConnection()
         if (m_serial->waitForReadyRead(500))
         {
             data = m_serial->readAll();
-            data.append('\0');
-            out << "Read: " << QString(data);
             if (QString(data).contains("ACK") || QString(data).contains("RUN"))
             {
-                out << "Found OK reply, setting keepTrying = false";
                 keepTrying = false;
             }
         }
@@ -293,7 +224,6 @@ void KettlerConnection::initializePcConnection()
 
     } while (keepTrying);
 
-    out << "Leaving " << __func__;
     setLoad(100);
 }
 

@@ -40,13 +40,11 @@ KettlerController::start()
     return m_kettler->start();
 }
 
-
 int
 KettlerController::restart()
 {
     return m_kettler->restart();
 }
-
 
 int
 KettlerController::pause()
@@ -54,13 +52,11 @@ KettlerController::pause()
     return 0;
 }
 
-
 int
 KettlerController::stop()
 {
     return m_kettler->stop();
 }
-
 
 bool
 KettlerController::discover(QString name)
