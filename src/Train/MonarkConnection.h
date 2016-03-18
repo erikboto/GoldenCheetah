@@ -40,7 +40,7 @@ public slots:
     void requestPower();
     void requestPulse();
     void requestCadence();
-    void readConfiguredLoad();
+    int readConfiguredLoad();
     void identifyModel();
     void setLoad(unsigned int load);
     void setKp(double kp);
