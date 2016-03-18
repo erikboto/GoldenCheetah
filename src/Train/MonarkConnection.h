@@ -40,6 +40,7 @@ public slots:
     void requestPower();
     void requestPulse();
     void requestCadence();
+    void readConfiguredLoad();
     void identifyModel();
     void setLoad(unsigned int load);
     void setKp(double kp);
@@ -53,7 +54,6 @@ private:
     QTimer *m_timer;
     QByteArray readAnswer(int timeoutMs = -1);
     QMutex m_mutex;
-    bool m_canControlPower;
     unsigned int m_load;
     unsigned int m_loadToWrite;
     double m_kp;
@@ -61,6 +61,8 @@ private:
     bool m_shouldWriteLoad;
     bool m_shouldWriteKp;
     enum MonarkType { MONARK_UNKNOWN, MONARK_LT2, MONARK_LC, MONARK_LC_NOVO } m_type;
+    bool canDoLoad();
+    bool canDoKp();
 
 signals:
     void pulse(quint32);
