@@ -342,6 +342,9 @@ double RealtimeData::value(DataSeries series) const
     case RightPedalSmoothness: return rps;
         break;
 
+    case Slope: return slope;
+        break;
+
     case None:
     default:
         return 0;
@@ -398,6 +401,7 @@ const QList<RealtimeData::DataSeries> &RealtimeData::listDataSeries()
         seriesList << RightTorqueEffectiveness;
         seriesList << LeftPedalSmoothness;
         seriesList << RightPedalSmoothness;
+        seriesList << Slope;
     }
     return seriesList;
 }
@@ -525,6 +529,9 @@ QString RealtimeData::seriesName(DataSeries series)
         break;
 
     case RightPedalSmoothness: return tr("Right Pedal Smoothness");
+        break;
+
+    case Slope: return tr("Slope");
         break;
     }
 }
