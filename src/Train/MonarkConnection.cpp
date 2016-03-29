@@ -32,6 +32,7 @@ MonarkConnection::MonarkConnection() :
     m_shouldWriteLoad(false),
     m_shouldWriteKp(false),
     m_type(MONARK_UNKNOWN),
+    m_mode(MONARK_MODE_WATT),
     m_power(0),
     m_cadence(0),
     m_pulse(0)
@@ -147,6 +148,8 @@ void MonarkConnection::requestAll()
         }
         m_load = m_loadToWrite;
         QByteArray data = m_serial->readAll();
+
+        m_mode = MONARK_MODE_WATT;
     }
 
     if ((m_kpToWrite != m_kp) && canDoKp())
@@ -160,6 +163,30 @@ void MonarkConnection::requestAll()
         }
         m_kp = m_kpToWrite;
         QByteArray data = m_serial->readAll();
+
+        m_mode = MONARK_MODE_KP;
+    } else if ((m_kpToWrite != m_kp) && canDoLoad())
+    {
+        // Set up for fake kp mode
+        m_kp = m_kpToWrite;
+        m_mode = MONARK_MODE_KP;
+    }
+
+    if ((m_mode == MONARK_MODE_KP) && canDoLoad() && !canDoKp())
+    {
+        // Calculate what wattage to request to simulate selected kp
+        // watt = kp * cadence * 0.98
+        m_load = (m_kp * m_cadence) * 0.98;
+
+        QString cmd = QString("power %1\r").arg(m_load);
+        m_serial->write(cmd.toStdString().c_str());
+        if (!m_serial->waitForBytesWritten(500))
+        {
+            // failure to write to device, bail out
+            this->exit(-1);
+        }
+        QByteArray data = m_serial->readAll();
+
     }
 
     m_mutex.unlock();
