@@ -38,6 +38,7 @@ public:
     quint32 power();
     quint32 cadence();
     quint32 pulse();
+    double kp();
 
 public slots:
     void requestAll();

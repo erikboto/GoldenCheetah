@@ -137,7 +137,7 @@ void MonarkConnection::requestAll()
     requestPulse();
     requestCadence();
 
-    if ((m_loadToWrite != m_load) && canDoLoad())
+    if ((m_loadToWrite != m_load) && m_mode == MONARK_MODE_WATT && canDoLoad())
     {
         QString cmd = QString("power %1\r").arg(m_loadToWrite);
         m_serial->write(cmd.toStdString().c_str());
@@ -148,11 +148,9 @@ void MonarkConnection::requestAll()
         }
         m_load = m_loadToWrite;
         QByteArray data = m_serial->readAll();
-
-        m_mode = MONARK_MODE_WATT;
     }
 
-    if ((m_kpToWrite != m_kp) && canDoKp())
+    if ((m_kpToWrite != m_kp) && m_mode == MONARK_MODE_KP && canDoKp())
     {
         QString cmd = QString("kp %1\r").arg(QString::number(m_kpToWrite, 'f', 1 ));
         m_serial->write(cmd.toStdString().c_str());
@@ -163,22 +161,15 @@ void MonarkConnection::requestAll()
         }
         m_kp = m_kpToWrite;
         QByteArray data = m_serial->readAll();
-
-        m_mode = MONARK_MODE_KP;
-    } else if ((m_kpToWrite != m_kp) && canDoLoad())
-    {
-        // Set up for fake kp mode
-        m_kp = m_kpToWrite;
-        m_mode = MONARK_MODE_KP;
     }
 
     if ((m_mode == MONARK_MODE_KP) && canDoLoad() && !canDoKp())
     {
         // Calculate what wattage to request to simulate selected kp
         // watt = kp * cadence * 0.98
-        m_load = (m_kp * m_cadence) * 0.98;
+        unsigned int load = (m_kp * m_cadence) * 0.98;
 
-        QString cmd = QString("power %1\r").arg(m_load);
+        QString cmd = QString("power %1\r").arg(load);
         m_serial->write(cmd.toStdString().c_str());
         if (!m_serial->waitForBytesWritten(500))
         {
@@ -186,7 +177,6 @@ void MonarkConnection::requestAll()
             this->exit(-1);
         }
         QByteArray data = m_serial->readAll();
-
     }
 
     m_mutex.unlock();
@@ -294,7 +284,7 @@ void MonarkConnection::identifyModel()
 void MonarkConnection::setLoad(unsigned int load)
 {
     m_loadToWrite = load;
-    m_shouldWriteLoad = true;
+    m_mode = MONARK_MODE_WATT;
 }
 
 void MonarkConnection::setKp(double kp)
@@ -306,7 +296,7 @@ void MonarkConnection::setKp(double kp)
         kp = 7;
 
     m_kpToWrite = kp;
-    m_shouldWriteKp = true;
+    m_mode = MONARK_MODE_KP;
 }
 
 /*
@@ -432,4 +422,9 @@ quint32 MonarkConnection::pulse()
 {
     QMutexLocker mlock(&m_readMutex);
     return m_pulse;
+}
+
+double MonarkConnection::kp()
+{
+    return m_kp;
 }
