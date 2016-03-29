@@ -330,3 +330,52 @@ bool MonarkConnection::canDoKp()
 
     return result;
 }
+
+/**
+ * This functions takes a serial port and tries if it can find a Monark bike connected
+ * to it.
+ */
+bool MonarkConnection::discover(QString portName)
+{
+    bool found = false;
+    QSerialPort sp;
+
+    sp.setPortName(portName);
+
+    if (sp.open(QSerialPort::ReadWrite))
+    {
+        configurePort(&sp);
+
+        // Discard any existing data
+        QByteArray data = sp.readAll();
+
+        // Read id from bike
+        sp.write("id\r");
+        sp.waitForBytesWritten(-1);
+
+        QByteArray id;
+        do
+        {
+            bool readyToRead = sp.waitForReadyRead(1000);
+            if (readyToRead)
+            {
+                id.append(sp.readAll());
+            } else {
+                id.append('\r');
+            }
+        } while ((id.indexOf('\r') == -1));
+
+        id.replace("\r", "\0");
+
+        // Should check for all bike ids known to use this protocol
+        if (QString(id).toLower().contains("lt") ||
+            QString(id).toLower().contains("lc") ||
+            QString(id).toLower().contains("novo")) {
+            found = true;
+        }
+    }
+
+    sp.close();
+
+    return found;
+}

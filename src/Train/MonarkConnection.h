@@ -33,7 +33,8 @@ public:
     void setPollInterval(int interval);
     int pollInterval();
     void setSerialPort(const QString serialPortName);
-    void configurePort(QSerialPort * serialPort);
+    static void configurePort(QSerialPort * serialPort);
+    static bool discover(QString portName);
 
 public slots:
     void requestAll();
