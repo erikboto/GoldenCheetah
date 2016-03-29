@@ -18,7 +18,7 @@
  */
 
 #include "MonarkController.h"
-#include "Monark.h"
+#include "MonarkConnection.h"
 #include "RealtimeData.h"
 
 #include <QMessageBox>
