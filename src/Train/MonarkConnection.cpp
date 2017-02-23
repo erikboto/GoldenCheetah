@@ -189,6 +189,9 @@ void MonarkConnection::requestAll()
 
 void MonarkConnection::requestPower()
 {
+    // Always empty read buffer first
+    m_serial->readAll();
+
     m_serial->write("power\r");
     if (!m_serial->waitForBytesWritten(500))
     {
@@ -204,6 +207,9 @@ void MonarkConnection::requestPower()
 
 void MonarkConnection::requestPulse()
 {
+    // Always empty read buffer first
+    m_serial->readAll();
+
     m_serial->write("pulse\r");
     if (!m_serial->waitForBytesWritten(500))
     {
@@ -219,6 +225,9 @@ void MonarkConnection::requestPulse()
 
 void MonarkConnection::requestCadence()
 {
+    // Always empty read buffer first
+    m_serial->readAll();
+
     m_serial->write("pedal\r");
     if (!m_serial->waitForBytesWritten(500))
     {
@@ -234,6 +243,9 @@ void MonarkConnection::requestCadence()
 
 int MonarkConnection::readConfiguredLoad()
 {
+    // Always empty read buffer first
+    m_serial->readAll();
+
     m_serial->write("B\r");
     if (!m_serial->waitForBytesWritten(500))
     {
@@ -284,7 +296,6 @@ void MonarkConnection::identifyModel()
         m_type = MONARK_839E;
         setLoad(100);
     }
-
 }
 
 void MonarkConnection::setLoad(unsigned int load)
