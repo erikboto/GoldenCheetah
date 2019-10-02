@@ -66,6 +66,18 @@ void NullController::getRealtimeData(RealtimeData &rtData) {
     rtData.setCadence(85 + ((rand()%10)-5));
     rtData.setHr(145 + ((rand()%3)-2));
     rtData.setHb(35 + ((rand()%30)), 11 + (double(rand()%100) * 0.01f));
+
+    double rf = 30 + ((rand()%2));
+    double rmv = 35 + ((rand()%3));
+    double vo2 = 3+(double(rand()%20) * 0.01f);
+    double vco2 = 2.1+(double(rand()%20) * 0.01f);
+
+    rtData.setRMV(rmv);
+    rtData.setRf(rf);
+    rtData.setVO2_VCO2(vo2, vco2);
+
+    emit vo2Data(rf, rmv, vo2, vco2);
+
     processRealtimeData(rtData); // for testing virtual power etc
 
     // generate an R-R data signal based upon 60bpm +/- 2bpm
