@@ -61,6 +61,7 @@ class NullController : public RealtimeController
         // signal instantly on data receipt for R-R data
         // made a special case to support HRV tool without complication
         void rrData(uint16_t  measurementTime, uint8_t heartrateBeats, uint8_t instantHeartrate);
+        void vo2Data(double rf, double rmv, double vo2, double vco2, double tv, double feo2);
 
     private:
 
