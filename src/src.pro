@@ -15,8 +15,12 @@
 include(gcconfig.pri)
 
 # You can also define your own local source to add to build
-HEADERS += $${LOCALHEADERS}
-SOURCES += $${LOCALSOURCES}
+HEADERS += $${LOCALHEADERS} \
+    Train/VMProConfigurator.h \
+    Train/VMProWidget.h
+SOURCES += $${LOCALSOURCES} \
+    Train/VMProConfigurator.cpp \
+    Train/VMProWidget.cpp
 
 ###=====================
 ### GOLDENCHEETAH TARGET
