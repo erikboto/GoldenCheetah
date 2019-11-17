@@ -671,6 +671,8 @@ TrainSidebar::configChanged(qint32)
 #ifdef QT_BLUETOOTH_LIB
         } else if (Devices.at(i).type == DEV_BT40) {
             Devices[i].controller = new BT40Controller(this, &Devices[i]);
+            connect(Devices[i].controller, SIGNAL(vo2Data(double,double,double,double)),
+                    this, SLOT(vo2Data(double,double,double,double)));
 #endif
         }
     }
@@ -1641,8 +1643,8 @@ void TrainSidebar::guiUpdate()           // refreshes the telemetry
                     rtData.setHb(local.getSmO2(), local.gettHb()); //only moxy data from ant and robot devices right now
                 }
 
-                if (Devices[dev].type == DEV_NULL) {
-                    // Only robot devices provides VO2 metrics
+                if (Devices[dev].type == DEV_NULL || Devices[dev].type == DEV_BT40) {
+                    // Only robot and BT40 devices provides VO2 metrics
                     rtData.setRf(local.getRf());
                     rtData.setRMV(local.getRMV());
                     rtData.setVO2_VCO2(local.getVO2(), local.getVCO2());
@@ -2807,6 +2809,7 @@ void TrainSidebar::vo2Data(double rf, double rmv, double vo2, double vco2)
 {
     if (status&RT_RECORDING && vo2File == NULL && recordFile != NULL) {
         QString vo2filename = recordFile->fileName().replace("csv", "vo2");
+        qDebug() << vo2filename;
 
         // setup the rr file
         vo2File = new QFile(vo2filename);
