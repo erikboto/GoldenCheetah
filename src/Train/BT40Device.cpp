@@ -20,6 +20,7 @@
 #include <QDebug>
 #include <QtGlobal>
 #include "BT40Controller.h"
+#include "VMProWidget.h"
 
 #define VO2MASTERPRO_SERVICE_UUID "{00001523-1212-EFDE-1523-785FEABCD123}"
 #define VO2MASTERPRO_VENTILATORY_CHAR_UUID "{00001527-1212-EFDE-1523-785FEABCD123}"
@@ -206,13 +207,20 @@ BT40Device::serviceStateChanged(QLowEnergyService::ServiceState s)
                                 QBluetoothUuid(QString(VO2MASTERPRO_GASEXCHANGE_CHAR_UUID))));
                     characteristics.append(service->characteristic(
                                 QBluetoothUuid(QString(VO2MASTERPRO_DATA_CHAR_UUID))));
-                    qDebug() << "serviceStateChanged: VO2MASTERPRO_VENTILATORY_CHAR_UUID";
+
+                    // Create a VM Pro Configurator window
+                    static VMProWidget * vmProWidget = nullptr;
+                    if (vmProWidget) {
+                        vmProWidget->deleteLater();
+                    }
+
+                    vmProWidget = new VMProWidget(service, this);
                 }
 
                 foreach(QLowEnergyCharacteristic characteristic, characteristics)
                 {
                     if (characteristic.isValid()) {
-
+                        qDebug() << "Starting notification for char with UUID: " << characteristic.uuid().toString();
                         const QLowEnergyDescriptor notificationDesc = characteristic.descriptor(QBluetoothUuid::ClientCharacteristicConfiguration);
                         if (notificationDesc.isValid()) {
                             service->writeDescriptor(notificationDesc, QByteArray::fromHex("0100"));
@@ -314,6 +322,8 @@ BT40Device::updateValue(const QLowEnergyCharacteristic &c, const QByteArray &val
         ds >> feco2;
         ds >> vo2;
         ds >> vco2;
+
+        qDebug() << "feo2: " << feo2 << " feco2: " << feco2 << " vo2: " << vo2 << " vco2: " << vco2;
 
         BT40Controller* controller = dynamic_cast<BT40Controller*>(parent);
         controller->setVO2_VCO2(vo2, vco2);
