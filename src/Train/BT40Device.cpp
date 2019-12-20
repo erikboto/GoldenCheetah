@@ -18,7 +18,6 @@
 
 #include "BT40Device.h"
 #include <QDebug>
-#include <QtGlobal>
 #include "BT40Controller.h"
 #include "VMProWidget.h"
 
@@ -325,6 +324,17 @@ BT40Device::updateValue(const QLowEnergyCharacteristic &c, const QByteArray &val
 
         qDebug() << "feo2: " << feo2 << " feco2: " << feco2 << " vo2: " << vo2 << " vco2: " << vco2;
 
+        if (feo2 == 2200 && vo2 == 22) {
+            // From the docs:
+            // If the value of FeO2 and VO2 for a given row are both exactly 22.0,
+            // said row is a “Ventilation-only row”. Such a row contains all the
+            // data less the FeO2 and VO2.
+
+            // Let's just ignore those updates completely, to avoid getting logged
+            // rows with zero VO2.
+            return;
+        }
+
         BT40Controller* controller = dynamic_cast<BT40Controller*>(parent);
         controller->setVO2_VCO2(vo2, vco2);
         controller->emitVO2Data();
@@ -339,7 +349,7 @@ BT40Device::updateValue(const QLowEnergyCharacteristic &c, const QByteArray &val
         ds >> feo2;
         ds >> vo2;
 
-        if (qFuzzyCompare(feo2,22.0f) && qFuzzyCompare(vo2,22.0f)) {
+        if (feo2 == 2200 && vo2 == 22) {
             // From the docs:
             // If the value of FeO2 and VO2 for a given row are both exactly 22.0,
             // said row is a “Ventilation-only row”. Such a row contains all the
