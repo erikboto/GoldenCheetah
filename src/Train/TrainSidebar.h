@@ -206,7 +206,7 @@ class TrainSidebar : public GcWindow
         void rrData(uint16_t  rrtime, uint8_t heartrateBeats, uint8_t instantHeartrate);
 
         // VO2 measurement data to save
-        void vo2Data(double rf, double rmv, double vo2, double vco2);
+        void vo2Data(double rf, double rmv, double vo2, double vco2, double tv, double feo2);
 
     protected:
 

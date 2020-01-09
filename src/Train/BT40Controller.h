@@ -69,13 +69,19 @@ public:
     void setVO2_VCO2(double vo2, double vco2) {
         telemetry.setVO2_VCO2(vo2, vco2);
     }
+    void setTv(double tv) {
+        telemetry.setTv(tv);
+    }
+    void setFeO2(double feo2) {
+        telemetry.setFeO2(feo2);
+    }
 
     void emitVO2Data() {
-        emit vo2Data(telemetry.getRf(), telemetry.getRMV(), telemetry.getVO2(), telemetry.getVCO2());
+        emit vo2Data(telemetry.getRf(), telemetry.getRMV(), telemetry.getVO2(), telemetry.getVCO2(), telemetry.getTv(), telemetry.getFeO2());
     }
 
 signals:
-    void vo2Data(double rf, double rmv, double vo2, double vco2);
+    void vo2Data(double rf, double rmv, double vo2, double vco2, double tv, double feo2);
 
 private slots:
     void addDevice(const QBluetoothDeviceInfo&);

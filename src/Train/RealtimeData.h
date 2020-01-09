@@ -104,11 +104,15 @@ public:
     void setVO2_VCO2(double vo2, double vco2);
     void setRf(double rf);
     void setRMV(double rmv);
+    void setTv(double tv);
+    void setFeO2(double feo2);
     double getVO2() const;
     double getVCO2() const;
     double getRf() const;
     double getRMV() const;
     double getRER() const;
+    double getTv() const;
+    double getFeO2() const;
 
     double getWatts() const;
     double getAltWatts() const;
@@ -163,7 +167,7 @@ private:
     double lte, rte, lps, rps; // torque efficiency and pedal smoothness
     double torque; // raw torque data for calibration display
     double latitude, longitude, altitude;
-    double vo2, vco2, rf, rmv;
+    double vo2, vco2, rf, rmv, tv, feo2;
 
     // derived data
     double distance;

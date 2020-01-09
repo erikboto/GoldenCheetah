@@ -69,14 +69,16 @@ void NullController::getRealtimeData(RealtimeData &rtData) {
 
     double rf = 30 + ((rand()%2));
     double rmv = 35 + ((rand()%3));
-    double vo2 = 3+(double(rand()%20) * 0.01f);
-    double vco2 = 2.1+(double(rand()%20) * 0.01f);
+    double vo2 = 3000+rand()%100;
+    double vco2 = 3100+rand()%100;
 
     rtData.setRMV(rmv);
     rtData.setRf(rf);
     rtData.setVO2_VCO2(vo2, vco2);
+    rtData.setTv(1);
+    rtData.setFeO2(0.4);
 
-    emit vo2Data(rf, rmv, vo2, vco2);
+    emit vo2Data(rf, rmv, vo2, vco2, 1, 0.4);
 
     processRealtimeData(rtData); // for testing virtual power etc
 

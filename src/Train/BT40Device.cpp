@@ -108,6 +108,8 @@ BT40Device::deviceDisconnected()
             controller->setRespiratoryFrequency(0);
             controller->setRespiratoryMinuteVolume(0);
             controller->setVO2_VCO2(0,0);
+            controller->setTv(0);
+            controller->setFeO2(0);
         }
     }
 
@@ -312,7 +314,8 @@ BT40Device::updateValue(const QLowEnergyCharacteristic &c, const QByteArray &val
 
         BT40Controller* controller = dynamic_cast<BT40Controller*>(parent);
         controller->setRespiratoryFrequency((double)rf/100);
-        controller->setRespiratoryMinuteVolume((double)rmv);
+        controller->setRespiratoryMinuteVolume((double)rmv/100);
+        controller->setTv((double)tidal_volume/100);
 
     } else if (c.uuid() == QBluetoothUuid(QString(VO2MASTERPRO_GASEXCHANGE_CHAR_UUID))) {
         qDebug() << "updatevalue: VO2MASTERPRO_GASEXCHANGE_CHAR_UUID";
@@ -337,6 +340,7 @@ BT40Device::updateValue(const QLowEnergyCharacteristic &c, const QByteArray &val
 
         BT40Controller* controller = dynamic_cast<BT40Controller*>(parent);
         controller->setVO2_VCO2(vo2, vco2);
+        controller->setFeO2((double)feo2/100);
         controller->emitVO2Data();
     } else if (c.uuid() == QBluetoothUuid(QString(VO2MASTERPRO_DATA_CHAR_UUID))) {
         qDebug() << "updatevalue: VO2MASTERPRO_DATA_CHAR_UUID";
@@ -364,6 +368,7 @@ BT40Device::updateValue(const QLowEnergyCharacteristic &c, const QByteArray &val
         controller->setVO2_VCO2(vo2, 0);
         controller->setRespiratoryFrequency((double)rf/100);
         controller->setRespiratoryMinuteVolume((double)rmv);
+        controller->setFeO2((double)feo2/100);
         controller->emitVO2Data();
     }
 }

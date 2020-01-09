@@ -686,6 +686,8 @@ void RealtimeData::setAltitude(double d) { altitude = d; }
 
 void RealtimeData::setRf(double rf) { this->rf = rf; }
 void RealtimeData::setRMV(double rmv) { this->rmv = rmv; }
+void RealtimeData::setTv(double tv) { this->tv = tv; }
+void RealtimeData::setFeO2(double feo2) {this->feo2 = feo2; }
 
 void RealtimeData::setVO2_VCO2(double vo2, double vco2)
 {
@@ -702,3 +704,5 @@ double RealtimeData::getRMV() const { return rmv; }
 double RealtimeData::getVO2() const { return vo2; }
 double RealtimeData::getVCO2() const { return vco2; }
 double RealtimeData::getRER() const { return rer; }
+double RealtimeData::getTv() const { return tv; }
+double RealtimeData::getFeO2() const { return feo2; }

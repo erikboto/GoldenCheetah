@@ -1389,8 +1389,8 @@ RideFile *CsvFileReader::openRideFile(QFile &file, QStringList &errors, QList<Ri
         // create the XDATA series
         vo2Series = new XDataSeries();
         vo2Series->name = "VO2 Measurements";
-        vo2Series->valuename << "Rf" << "RMV" << "VO2" << "VCO2";
-        vo2Series->unitname << "bpm" << "l/min" << "ml/min" << "ml/min";
+        vo2Series->valuename << "Rf" << "RMV" << "VO2" << "VCO2" << "Tv" << "FeO2";
+        vo2Series->unitname << "bpm" << "l/min" << "ml/min" << "ml/min" << "l" << "%";
 
         // attempt to read and add the data
         lineno=1;
@@ -1430,6 +1430,8 @@ RideFile *CsvFileReader::openRideFile(QFile &file, QStringList &errors, QList<Ri
                     p->number[1] = values.at(2).toDouble();
                     p->number[2] = values.at(3).toDouble();
                     p->number[3] = values.at(4).toDouble();
+                    p->number[4] = values.at(5).toDouble();
+                    p->number[5] = values.at(6).toDouble();
                     vo2Series->datapoints.append(p);
                 }
 

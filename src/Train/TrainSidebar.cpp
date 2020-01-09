@@ -660,8 +660,8 @@ TrainSidebar::configChanged(qint32)
 #endif
         } else if (Devices.at(i).type == DEV_NULL) {
             Devices[i].controller = new NullController(this, &Devices[i]);
-            connect(Devices[i].controller, SIGNAL(vo2Data(double,double,double,double)),
-                    this, SLOT(vo2Data(double,double,double,double)));
+            connect(Devices[i].controller, SIGNAL(vo2Data(double,double,double,double,double,double)),
+                    this, SLOT(vo2Data(double,double,double,double,double,double)));
         } else if (Devices.at(i).type == DEV_ANTLOCAL) {
             Devices[i].controller = new ANTlocalController(this, &Devices[i]);
             // connect slot for receiving remote control commands
@@ -671,8 +671,8 @@ TrainSidebar::configChanged(qint32)
 #ifdef QT_BLUETOOTH_LIB
         } else if (Devices.at(i).type == DEV_BT40) {
             Devices[i].controller = new BT40Controller(this, &Devices[i]);
-            connect(Devices[i].controller, SIGNAL(vo2Data(double,double,double,double)),
-                    this, SLOT(vo2Data(double,double,double,double)));
+            connect(Devices[i].controller, SIGNAL(vo2Data(double,double,double,double,double,double)),
+                    this, SLOT(vo2Data(double,double,double,double,double,double)));
 #endif
         }
     }
@@ -1648,6 +1648,8 @@ void TrainSidebar::guiUpdate()           // refreshes the telemetry
                     rtData.setRf(local.getRf());
                     rtData.setRMV(local.getRMV());
                     rtData.setVO2_VCO2(local.getVO2(), local.getVCO2());
+                    rtData.setTv(local.getTv());
+                    rtData.setFeO2(local.getFeO2());
                 }
 
                 // what are we getting from this one?
@@ -2805,7 +2807,7 @@ void TrainSidebar::rrData(uint16_t  rrtime, uint8_t count, uint8_t bpm)
 }
 
 // VO2 Measurement data received
-void TrainSidebar::vo2Data(double rf, double rmv, double vo2, double vco2)
+void TrainSidebar::vo2Data(double rf, double rmv, double vo2, double vco2, double tv, double feo2)
 {
     if (status&RT_RECORDING && vo2File == NULL && recordFile != NULL) {
         QString vo2filename = recordFile->fileName().replace("csv", "vo2");
@@ -2820,7 +2822,7 @@ void TrainSidebar::vo2Data(double rf, double rmv, double vo2, double vco2)
 
             // CSV File header
             QTextStream recordFileStream(vo2File);
-            recordFileStream << "secs, rf, rmv, vo2, vco2\n";
+            recordFileStream << "secs, rf, rmv, vo2, vco2, tv, feo2\n";
         }
     }
 
@@ -2832,7 +2834,7 @@ void TrainSidebar::vo2Data(double rf, double rmv, double vo2, double vco2)
         double secs = double(session_elapsed_msec + session_time.elapsed()) / 1000.00;
 
         // output a line
-        recordFileStream << secs << ", " << rf << ", " << rmv << ", " << vo2 << ", " << vco2 << "\n";
+        recordFileStream << secs << ", " << rf << ", " << rmv << ", " << vo2 << ", " << vco2 << ", " << tv << ", " << feo2 << "\n";
     }
 }
 
