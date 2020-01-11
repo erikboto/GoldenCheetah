@@ -30,7 +30,7 @@ RealtimeData::RealtimeData()
     thb = smo2 = o2hb = hhb = 0.0;
     lrbalance = rte = lte = lps = rps = 0.0;
     latitude = longitude = altitude = 0.0;
-    rf = rmv = vo2 = vco2 = 0.0;
+    rf = rmv = vo2 = vco2 = tv = feo2 = 0.0;
     trainerStatusAvailable = false;
     trainerReady = true;
     trainerRunning = true;
@@ -410,6 +410,12 @@ double RealtimeData::value(DataSeries series) const
     case RER: return rer;
         break;
 
+    case TidalVolume: return tv;
+        break;
+
+    case FeO2: return feo2;
+        break;
+
     case None:
     default:
         return 0;
@@ -455,6 +461,8 @@ const QList<RealtimeData::DataSeries> &RealtimeData::listDataSeries()
         seriesList << VO2;
         seriesList << VCO2;
         seriesList << RER;
+        seriesList << TidalVolume;
+        seriesList << FeO2;
         seriesList << AvgWatts;
         seriesList << AvgSpeed;
         seriesList << AvgCadence;
@@ -641,6 +649,12 @@ QString RealtimeData::seriesName(DataSeries series)
         break;
 
     case RER: return tr("Respiratory Exchange Ratio");
+        break;
+
+    case TidalVolume: return tr("Tidal Volume");
+        break;
+
+    case FeO2: return tr("Fraction O2 Expired");
         break;
     }
 }

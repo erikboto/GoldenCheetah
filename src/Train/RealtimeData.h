@@ -39,7 +39,7 @@ public:
                       XPower, BikeScore, RI, Joules, SkibaVI,
                       IsoPower, BikeStress, IF, VI, Wbal,
                       SmO2, tHb, HHb, O2Hb,
-                      Rf, RMV, VO2, VCO2, RER,
+                      Rf, RMV, VO2, VCO2, RER, TidalVolume, FeO2,
                       AvgWatts, AvgSpeed, AvgCadence, AvgHeartRate,
                       AvgWattsLap, AvgSpeedLap, AvgCadenceLap, AvgHeartRateLap,
                       VirtualSpeed, AltWatts, LRBalance, LapTimeRemaining,
