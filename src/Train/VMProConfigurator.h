@@ -56,6 +56,16 @@ enum VMProState
     VM_STATE_RECORD      /*Device must be calibrated before recording. Polls sensors in order to produce VO2 metrics.*/
 };
 
+class VMProErrorToStringHelper {
+public:
+    static const int FatalErrorOffset = 0;             //Offset for fatal errors.
+    static const int WarningErrorOffset = 50;          //Offset for warnings errors.
+    static const int O2CalibrationErrorOffset = 100;   //Offset for recalibration errors.
+    static const int DiagnosticErrorOffset = 120;      //Offset for diagnostic errors. These are not reported to the user but are recorded.
+
+    static QString errorDescription(int errorCode);
+};
+
 Q_DECLARE_METATYPE(VMProCommand)
 Q_DECLARE_METATYPE(VMProVenturiSize)
 Q_DECLARE_METATYPE(VMProVolumeCorrectionMode)

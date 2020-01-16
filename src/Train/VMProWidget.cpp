@@ -68,6 +68,16 @@ VMProWidget::VMProWidget(QLowEnergyService * service, QObject * parent)
     QGroupBox *idleTimeoutBox = new QGroupBox("Idle Timeout");
     idleTimeoutBox->setLayout(idleTimeoutLayout);
 
+    // Calibration Progress
+    QLabel * calibrationProgressInfoLabel = new QLabel("Calibration Status:");
+    m_calibrationProgressLabel = new QLabel("Unknown");
+
+    QVBoxLayout *calibrationProgressLayout = new QVBoxLayout();
+    calibrationProgressLayout->addWidget(calibrationProgressInfoLabel);
+    calibrationProgressLayout->addWidget(m_calibrationProgressLabel);
+
+    QGroupBox *calibrationProgressBox = new QGroupBox("Calibration Status");
+    calibrationProgressBox->setLayout(calibrationProgressLayout);
 
     // Settings Widget
     QVBoxLayout *settingsLayout = new QVBoxLayout();
@@ -75,17 +85,17 @@ VMProWidget::VMProWidget(QLowEnergyService * service, QObject * parent)
     settingsLayout->addWidget(volumeBox);
     settingsLayout->addWidget(autocalibBox);
     settingsLayout->addWidget(idleTimeoutBox);
+    settingsLayout->addWidget(calibrationProgressBox);
     settingsWidget->setLayout(settingsLayout);
 
     QWidget * dbgWidget = new QWidget();
     QGroupBox *dbgBox = new QGroupBox("Status Information");
     QVBoxLayout *dbgLayout = new QVBoxLayout(dbgWidget);
-    m_dbgLabel = new QLabel("...", dbgWidget);
-    dbgLayout->addWidget(m_dbgLabel);
+    m_deviceLog = new QTextEdit("...", dbgWidget);
+    dbgLayout->addWidget(m_deviceLog);
     dbgBox->setLayout(dbgLayout);
 
     // Main layout
-
     QWidget * w = new QWidget();
     QHBoxLayout *mainLayout = new QHBoxLayout(w);
     mainLayout->addWidget(settingsWidget);
@@ -117,7 +127,7 @@ VMProWidget::VMProWidget(QLowEnergyService * service, QObject * parent)
 
 void VMProWidget::addStatusMessage(const QString & msg)
 {
-    m_dbgLabel->setText(m_dbgLabel->text() + "\n" + msg);
+    m_deviceLog->append(msg);
 }
 
 void VMProWidget::onVolumeCorrectionModeChanged(VMProVolumeCorrectionMode mode)
@@ -156,7 +166,7 @@ void VMProWidget::onErrorCodeReceived(quint8 code)
 
 void VMProWidget::onCalibrationProgressChanged(quint8 percentCompleted)
 {
-
+    m_calibrationProgressLabel->setText(QString::number(percentCompleted));
 }
 
 void VMProWidget::onIdleTimeoutPickerChanged(int /*index*/)

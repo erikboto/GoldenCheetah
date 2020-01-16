@@ -8,6 +8,7 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QLowEnergyService>
+#include <QTextEdit>
 
 #include "VMProConfigurator.h"
 
@@ -42,11 +43,12 @@ private:
     QList<QString> m_logMessages;
 
     QWidget * m_widget;
-    QLabel * m_dbgLabel;
+    QTextEdit * m_deviceLog;
     QComboBox * m_userPiecePicker;
     QComboBox * m_volumePicker;
     QComboBox * m_autocalibPicker;
     QComboBox * m_idleTimeoutPicker;
+    QLabel * m_calibrationProgressLabel;
 
     // Current settings
     VMProIdleTimeout m_currIdleTimeoutState;
