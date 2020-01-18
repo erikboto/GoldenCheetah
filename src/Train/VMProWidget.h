@@ -14,6 +14,7 @@
 
 class VMProWidget : public QObject
 {
+    Q_OBJECT
 public:
     VMProWidget(QLowEnergyService * service, QObject * parent);
 
@@ -37,6 +38,9 @@ private slots:
 
     // File IO
     void onSaveClicked();
+
+signals:
+    void setNotification(QString msg, int timeout);
 
 private:
     QLowEnergyService * m_vmProService;
