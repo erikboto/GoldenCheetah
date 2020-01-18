@@ -114,9 +114,10 @@ void
 BT40Controller::addDevice(const QBluetoothDeviceInfo &info)
 {
     if (info.coreConfigurations() & QBluetoothDeviceInfo::LowEnergyCoreConfiguration) {
-	BT40Device* dev = new BT40Device(this, info);
-	devices.append(dev);
-	dev->connectDevice();
+        BT40Device* dev = new BT40Device(this, info);
+        devices.append(dev);
+        dev->connectDevice();
+        connect(dev, &BT40Device::setNotification, this, &BT40Controller::setNotification);
     }
 }
 

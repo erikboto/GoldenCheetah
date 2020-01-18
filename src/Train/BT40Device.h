@@ -52,7 +52,8 @@ private slots:
 				  const QByteArray &value);
     void serviceError(QLowEnergyService::ServiceError e);
 
-
+signals:
+    void setNotification(QString msg, int timeout);
 private:
     QObject *parent;
     QBluetoothDeviceInfo m_currentDevice;

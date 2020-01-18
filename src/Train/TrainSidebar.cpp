@@ -1513,6 +1513,7 @@ void TrainSidebar::Connect()
     foreach(int dev, activeDevices) {
         Devices[dev].controller->start();
         Devices[dev].controller->resetCalibrationState();
+        connect(Devices[dev].controller, &RealtimeController::setNotification, this, &TrainSidebar::setNotification);
     }
     setStatusFlags(RT_CONNECTED);
     gui_timer->start(REFRESHRATE);
@@ -1530,7 +1531,10 @@ void TrainSidebar::Disconnect()
 
     qDebug() << "disconnecting..";
 
-    foreach(int dev, activeDevices) Devices[dev].controller->stop();
+    foreach(int dev, activeDevices) {
+        connect(Devices[dev].controller, &RealtimeController::setNotification, this, &TrainSidebar::setNotification);
+        Devices[dev].controller->stop();
+    }
     clearStatusFlags(RT_CONNECTED);
 
     gui_timer->stop();
