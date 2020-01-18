@@ -1,10 +1,16 @@
 #include "VMProWidget.h"
 
 #include <QThread>
+#include <QPushButton>
+#include <QFileDialog>
+#include <QStandardPaths>
+#include <QScrollBar>
 
 VMProWidget::VMProWidget(QLowEnergyService * service, QObject * parent)
 {
     m_vmProConfigurator = new VMProConfigurator(service, this);
+
+    connect(m_vmProConfigurator, &VMProConfigurator::logMessage, this, &VMProWidget::addStatusMessage);
 
     QWidget * settingsWidget = new QWidget();
 
@@ -92,7 +98,10 @@ VMProWidget::VMProWidget(QLowEnergyService * service, QObject * parent)
     QGroupBox *dbgBox = new QGroupBox("Status Information");
     QVBoxLayout *dbgLayout = new QVBoxLayout(dbgWidget);
     m_deviceLog = new QTextEdit("...", dbgWidget);
+    QPushButton * saveButton = new QPushButton("Save log to file");
+    saveButton->setMaximumHeight(25);
     dbgLayout->addWidget(m_deviceLog);
+    dbgLayout->addWidget(saveButton);
     dbgBox->setLayout(dbgLayout);
 
     // Main layout
@@ -119,6 +128,7 @@ VMProWidget::VMProWidget(QLowEnergyService * service, QObject * parent)
     connect(m_vmProConfigurator, &VMProConfigurator::calibrationProgressChanged, this, &VMProWidget::onCalibrationProgressChanged);
     connect(m_vmProConfigurator, &VMProConfigurator::volumeCorrectionModeChanged, this, &VMProWidget::onVolumeCorrectionModeChanged);
     connect(m_vmProConfigurator, &VMProConfigurator::errorCodeReceived, this, &VMProWidget::onErrorCodeReceived);
+    connect(saveButton, &QPushButton::clicked, this, &VMProWidget::onSaveClicked);
 
     connect(m_userPiecePicker, static_cast<void (QComboBox::*)(int index)>(&QComboBox::currentIndexChanged), this, &VMProWidget::onUserPieceSizePickerChanged);
     connect(m_volumePicker, static_cast<void (QComboBox::*)(int index)>(&QComboBox::currentIndexChanged), this, &VMProWidget::onVolumeCorrectionModePickerChanged);
@@ -128,6 +138,8 @@ VMProWidget::VMProWidget(QLowEnergyService * service, QObject * parent)
 void VMProWidget::addStatusMessage(const QString & msg)
 {
     m_deviceLog->append(msg);
+    QScrollBar *sb = m_deviceLog->verticalScrollBar();
+    sb->setValue(sb->maximum());
 }
 
 void VMProWidget::onVolumeCorrectionModeChanged(VMProVolumeCorrectionMode mode)
@@ -195,5 +207,22 @@ void VMProWidget::onVolumeCorrectionModePickerChanged(int /*index*/)
     if (newState != m_currVolumeCorrectionMode)
     {
         m_vmProConfigurator->setVolumeCorrectionMode(newState);
+    }
+}
+
+void VMProWidget::onSaveClicked()
+{
+    QString fileName = QFileDialog::getSaveFileName(nullptr, tr("Save File"),
+                                                    QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
+    if (!fileName.isEmpty())
+    {
+        QFile outfile(fileName);
+        if (outfile.open(QIODevice::WriteOnly | QIODevice::Text))
+        {
+            QTextStream stream(&outfile);
+            stream << m_deviceLog->toPlainText();
+            outfile.flush();
+            outfile.close();
+        }
     }
 }

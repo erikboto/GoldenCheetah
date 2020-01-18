@@ -22,7 +22,7 @@ private slots:
     void addStatusMessage(const QString &message);
 
     // Add a message that ends up in log file
-    void addLogMessage(const QString &message);
+    //void addLogMessage(const QString &message);
 
     // Methods that should update the GUI to reflect the new states
     void onVolumeCorrectionModeChanged(VMProVolumeCorrectionMode mode);
@@ -35,6 +35,9 @@ private slots:
     void onUserPieceSizePickerChanged(int index);
     void onIdleTimeoutPickerChanged(int index);
     void onVolumeCorrectionModePickerChanged(int index);
+
+    // File IO
+    void onSaveClicked();
 
 private:
     QLowEnergyService * m_vmProService;

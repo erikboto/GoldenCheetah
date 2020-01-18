@@ -116,64 +116,70 @@ void VMProConfigurator::onDeviceReply(const QLowEnergyCharacteristic &c,
     if (value.length() == 2)
     {
         VMProCommand cmd = static_cast<VMProCommand>(value[0]);
-        char data = value[1];
+        quint8 data = value[1];
 
         switch (cmd) {
         case VM_BLE_UNKNOWN_RESPONSE:
-            qDebug() << "Got VM_BLE_UNKNOWN_RESPONSE" << (int)data;
-            //appendDbgInfo("Got VM_BLE_UNKNOWN_RESPONSE");
+            qDebug() << "Got VM_BLE_UNKNOWN_RESPONSE" << data;
+            emit logMessage(QString("Unknown Response: %1").arg(data));
             break;
         case VM_BLE_SET_STATE:
-            qDebug() << "Got VM_BLE_SET_STATE" << (int)data;
+            qDebug() << "Got VM_BLE_SET_STATE" << data;
             break;
         case VM_BLE_GET_STATE:
-            qDebug() << "Got VM_BLE_GET_STATE" << (int)data;
-            //appendDbgInfo(QString("Device State: %1").arg((int)data));
+            qDebug() << "Got VM_BLE_GET_STATE" << data;
+            emit logMessage(QString("Device State: %1").arg(data));
             break;
         case VM_BLE_SET_VENTURI_SIZE:
-            qDebug() << "Got VM_BLE_SET_VENTURI_SIZE" << (int)data;
+            qDebug() << "Got VM_BLE_SET_VENTURI_SIZE" << data;
             break;
         case VM_BLE_GET_VENTURI_SIZE:
-            qDebug() << "Got VM_BLE_GET_VENTURI_SIZE" << (int)data;
-            //appendDbgInfo(QString("User Piece Size %1").arg((int)data));
+            qDebug() << "Got VM_BLE_GET_VENTURI_SIZE" << data;
+            emit logMessage(QString("User Piece Size: %1").arg(data));
             emit userPieceSizeChanged(static_cast<VMProVenturiSize>(data));
             break;
         case VM_BLE_GET_CALIB_PROGRESS:
             emit calibrationProgressChanged(data);
-            qDebug() << "Got VM_BLE_GET_CALIB_PROGRESS" << (int)data;
-            //appendDbgInfo(QString("Calibration Progress %1 %").arg((int)data));
+            qDebug() << "Got VM_BLE_GET_CALIB_PROGRESS" << data;
+            emit logMessage(QString("Calibration Progress: %1 %").arg(data));
             break;
         case VM_BLE_ERROR:
-            qDebug() << VMProErrorToStringHelper::errorDescription((int)data);
+            qDebug() << VMProErrorToStringHelper::errorDescription(data);
+            emit logMessage(VMProErrorToStringHelper::errorDescription(data));
             break;
         case VM_BLE_SET_VO2_REPORT_MODE:
-            qDebug() << "Got VM_BLE_SET_VO2_REPORT_MODE" << (int)data;
+            qDebug() << "Got VM_BLE_SET_VO2_REPORT_MODE" << data;
             break;
         case VM_BLE_GET_VO2_REPORT_MODE:
-            qDebug() << "Got VM_BLE_GET_VO2_REPORT_MODE" << (int)data;
+            qDebug() << "Got VM_BLE_GET_VO2_REPORT_MODE" << data;
+            emit logMessage(QString("Volume Correction Mode: %1").arg(data));
             emit volumeCorrectionModeChanged(static_cast<VMProVolumeCorrectionMode>(data));
             break;
         case VM_BLE_GET_O2_CELL_AGE:
-            qDebug() << "Got VM_BLE_GET_O2_CELL_AGE: " << (int)data;
+            qDebug() << "Got VM_BLE_GET_O2_CELL_AGE: " << data;
+            emit logMessage(QString("O2 Cell Age: %1").arg(data));
             break;
         case VM_BLE_RESET_O2_CELL_AGE:
-            qDebug() << "Got VM_BLE_RESET_O2_CELL_AGE: " << (int)data;
+            qDebug() << "Got VM_BLE_RESET_O2_CELL_AGE: " << data;
             break;
         case VM_BLE_SET_IDLE_TIMEOUT_MODE:
-            qDebug() << "Got VM_BLE_SET_IDLE_TIMEOUT_MODE: " << (int)data;
+            qDebug() << "Got VM_BLE_SET_IDLE_TIMEOUT_MODE: " << data;
             break;
         case VM_BLE_GET_IDLE_TIMEOUT_MODE:
-            qDebug() << "Got VM_BLE_GET_IDLE_TIMEOUT_MODE" << (int)data;
+            qDebug() << "Got VM_BLE_GET_IDLE_TIMEOUT_MODE" << data;
+            emit logMessage(QString("Idle Timeout Mode: %1").arg(data));
             emit idleTimeoutStateChanged(static_cast<VMProIdleTimeout>(data));
             break;
         case VM_BLE_SET_AUTO_RECALIB_MODE:
-            qDebug() << "Got VM_BLE_SET_AUTO_RECALIB_MODE: " << (int)data;
+            qDebug() << "Got VM_BLE_SET_AUTO_RECALIB_MODE: " << data;
             break;
         case VM_BLE_GET_AUTO_RECALIB_MODE:
-            qDebug() << "Got VM_BLE_GET_AUTO_RECALIB_MODE: " << (int)data;
+            qDebug() << "Got VM_BLE_GET_AUTO_RECALIB_MODE: " << data;
+            emit logMessage(QString("Auto-calibration Mode: %1").arg(data));
             break;
         case VM_BLE_BREATH_STATE_CHANGED:
-            qDebug() << "Got breath state changed: " << (int)data;
+            qDebug() << "Got breath state changed: " << data;
+            emit logMessage(QString("Breath State: %1").arg(data));
             break;
         //default:
         //    qDebug() << "VMProConfigurator::onDeviceReply Received unexpected reply from device";
@@ -310,6 +316,6 @@ QString VMProErrorToStringHelper::errorDescription(int errorCode)
     case (DiagnosticErrorOffset + 15):
     case (DiagnosticErrorOffset + 16):
     default:
-        return "Error Code: " + errorCode;
+        return QString("Error Code: %1").arg(errorCode);
     }
 }
