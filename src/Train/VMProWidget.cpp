@@ -175,6 +175,7 @@ void VMProWidget::onIdleTimeoutChanged(VMProIdleTimeout state)
 void VMProWidget::onCalibrationProgressChanged(quint8 percentCompleted)
 {
     m_calibrationProgressLabel->setText(QString::number(percentCompleted));
+    emit setNotification(QString("VMPro Calibration: %1 %").arg(percentCompleted), 3);
 }
 
 void VMProWidget::onIdleTimeoutPickerChanged(int /*index*/)

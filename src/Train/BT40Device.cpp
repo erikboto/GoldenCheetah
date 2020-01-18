@@ -213,6 +213,7 @@ BT40Device::serviceStateChanged(QLowEnergyService::ServiceState s)
                     static VMProWidget * vmProWidget = nullptr;
                     if (!vmProWidget) {
                         vmProWidget = new VMProWidget(service, this);
+                        connect(vmProWidget, &VMProWidget::setNotification, this, &BT40Device::setNotification);
                     }
                 }
 
