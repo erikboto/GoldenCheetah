@@ -127,7 +127,6 @@ VMProWidget::VMProWidget(QLowEnergyService * service, QObject * parent)
     connect(m_vmProConfigurator, &VMProConfigurator::userPieceSizeChanged, this, &VMProWidget::onUserPieceSizeChanged);
     connect(m_vmProConfigurator, &VMProConfigurator::calibrationProgressChanged, this, &VMProWidget::onCalibrationProgressChanged);
     connect(m_vmProConfigurator, &VMProConfigurator::volumeCorrectionModeChanged, this, &VMProWidget::onVolumeCorrectionModeChanged);
-    connect(m_vmProConfigurator, &VMProConfigurator::errorCodeReceived, this, &VMProWidget::onErrorCodeReceived);
     connect(saveButton, &QPushButton::clicked, this, &VMProWidget::onSaveClicked);
 
     connect(m_userPiecePicker, static_cast<void (QComboBox::*)(int index)>(&QComboBox::currentIndexChanged), this, &VMProWidget::onUserPieceSizePickerChanged);
@@ -170,10 +169,6 @@ void VMProWidget::onIdleTimeoutChanged(VMProIdleTimeout state)
     if (index != -1) {
         m_idleTimeoutPicker->setCurrentIndex(index);
     }
-}
-
-void VMProWidget::onErrorCodeReceived(quint8 code)
-{
 }
 
 void VMProWidget::onCalibrationProgressChanged(quint8 percentCompleted)

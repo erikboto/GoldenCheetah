@@ -29,7 +29,6 @@ private slots:
     void onUserPieceSizeChanged(VMProVenturiSize size);
     void onIdleTimeoutChanged(VMProIdleTimeout state);
     void onCalibrationProgressChanged(quint8 percentCompleted);
-    void onErrorCodeReceived(quint8 code);
 
     // Method to handle when user changes the values
     void onUserPieceSizePickerChanged(int index);

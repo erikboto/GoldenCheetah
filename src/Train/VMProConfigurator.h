@@ -86,7 +86,6 @@ signals:
     void idleTimeoutStateChanged(VMProIdleTimeout timeoutState);
     void volumeCorrectionModeChanged(VMProVolumeCorrectionMode timeoutState);
     void calibrationProgressChanged(quint8 percentCompleted);
-    void errorCodeReceived(quint8 code);
     void logMessage(const QString &msg);
 
 public slots:
