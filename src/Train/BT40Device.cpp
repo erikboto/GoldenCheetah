@@ -211,11 +211,9 @@ BT40Device::serviceStateChanged(QLowEnergyService::ServiceState s)
 
                     // Create a VM Pro Configurator window
                     static VMProWidget * vmProWidget = nullptr;
-                    if (vmProWidget) {
-                        vmProWidget->deleteLater();
+                    if (!vmProWidget) {
+                        vmProWidget = new VMProWidget(service, this);
                     }
-
-                    vmProWidget = new VMProWidget(service, this);
                 }
 
                 foreach(QLowEnergyCharacteristic characteristic, characteristics)
