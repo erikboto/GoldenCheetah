@@ -512,6 +512,9 @@ DialWindow::telemetryUpdate(const RealtimeData &rtData)
     case RealtimeData::VCO2:
     case RealtimeData::Rf:
     case RealtimeData::RMV:
+        valueLabel->setText(QString("%1").arg(value, 0, 'f', 0));
+        break;
+
     case RealtimeData::TidalVolume:
         valueLabel->setText(QString("%1").arg(value, 0, 'f', 1));
         break;
