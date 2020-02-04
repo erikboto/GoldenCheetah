@@ -135,6 +135,8 @@ class WorkoutWidget : public QWidget
         QList<int> hr; // 1s samples [bpm]
         QList<double> speed; // 1s samples [km/h]
         QList<int> cadence; // 1s samples [rpm]
+        QList<int> vo2; // 1s samples [ml/min]
+        QList<int> ventilation; // 1s samples [l/min]
 
         // interaction state;
         // none - initial state
@@ -384,6 +386,8 @@ class WorkoutWidget : public QWidget
         int cadenceMax;
         int hrMax;
         double speedMax;
+        int vo2Max;
+        int ventilationMax;
 
         // resampling when recording
         double wbalSum;
@@ -391,6 +395,8 @@ class WorkoutWidget : public QWidget
         double cadenceSum;
         double speedSum;
         double hrSum;
+        double vo2Sum;
+        double ventilationSum;
         int count;
 };
 

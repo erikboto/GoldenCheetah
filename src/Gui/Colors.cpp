@@ -229,6 +229,11 @@ void GCColor::setupColors()
 #endif
         { tr("Overview Background"), "COVERVIEWBACKGROUND", QColor(0,0,0) },
         { tr("Overview Card Background"), "CCARDBACKGROUND", QColor(52,52,52) },
+        { tr("VO2"), "CVO2", Qt::magenta },
+        { tr("Ventilation"), "CVENTILATION", Qt::cyan },
+        { tr("VCO2"), "CVCO2", Qt::green },
+        { tr("Tidal Volume"), "CTIDALVOLUME", Qt::yellow },
+        { tr("Respiratory Frequency"), "CRESPFREQUENCY", Qt::yellow },
         { "", "", QColor(0,0,0) },
     };
 

@@ -378,6 +378,10 @@ WWTelemetry::paint(QPainter *painter)
     paintSampleList(painter, GColor(CSPEED), workoutWidget()->speed, RideFile::kph);
     // Draw Cadence
     paintSampleList(painter, GColor(CCADENCE), workoutWidget()->cadence, RideFile::cad);
+    // Draw VO2
+    paintSampleList(painter, GColor(CVO2), workoutWidget()->vo2, RideFile::vo2);
+    // Draw Ventilation
+    paintSampleList(painter, GColor(CVENTILATION), workoutWidget()->ventilation, RideFile::ventilation);
 
     //
     // W'bal last, if not zones return
