@@ -97,7 +97,7 @@ WorkoutWidget::WorkoutWidget(WorkoutWindow *parent, Context *context) :
     hrMax = 220;
     speedMax = 50;
     vo2Max = 5000;
-    ventilationMax = 50;
+    ventilationMax = 130;
 
     onDrag = onCreate = onRect = atRect = QPointF(-1,-1);
     qwkactive = false;
@@ -163,7 +163,7 @@ WorkoutWidget::start()
     hrMax = 220;
     speedMax = 50;
     vo2Max = 5000;
-    ventilationMax = 50;
+    ventilationMax = 130;
 
     // replot
     update();
@@ -224,7 +224,7 @@ WorkoutWidget::telemetryUpdate(RealtimeData rt)
         if (s > speedMax) speedMax=s;
         if (h > hrMax) hrMax=h;
         if (v > vo2Max) vo2Max=v;
-        if (ve > ventilationMax) ventilationMax=v;
+        if (ve > ventilationMax) ventilationMax=ve;
 
         // Do we need to increase plot x-axis max? (add 15 min at a time)
         if (cadence.size() > maxVX_) setMaxVX(maxVX_ + 900);
