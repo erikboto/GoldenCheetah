@@ -88,6 +88,7 @@ signals:
     void volumeCorrectionModeChanged(VMProVolumeCorrectionMode timeoutState);
     void calibrationProgressChanged(quint8 percentCompleted);
     void logMessage(const QString &msg);
+    void setNotification(QString msg, int timeout);
 
 public slots:
     void getUserPieceSize();
@@ -101,6 +102,8 @@ public slots:
     void startCalibration();
 
     void setupCharNotifications(QLowEnergyService * service);
+
+    void onIncomingError(int errorCode);
 
 private slots:
     void onDeviceReply(const QLowEnergyCharacteristic &c, const QByteArray &value);

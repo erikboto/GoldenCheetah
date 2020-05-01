@@ -131,6 +131,7 @@ VMProWidget::VMProWidget(QLowEnergyService * service, QObject * parent)
     connect(m_vmProConfigurator, &VMProConfigurator::userPieceSizeChanged, this, &VMProWidget::onUserPieceSizeChanged);
     connect(m_vmProConfigurator, &VMProConfigurator::calibrationProgressChanged, this, &VMProWidget::onCalibrationProgressChanged);
     connect(m_vmProConfigurator, &VMProConfigurator::volumeCorrectionModeChanged, this, &VMProWidget::onVolumeCorrectionModeChanged);
+    connect(m_vmProConfigurator, &VMProConfigurator::setNotification, this, &VMProWidget::setNotification);
     connect(saveButton, &QPushButton::clicked, this, &VMProWidget::onSaveClicked);
     connect(startCalibration, &QPushButton::clicked, m_vmProConfigurator, &VMProConfigurator::startCalibration);
 

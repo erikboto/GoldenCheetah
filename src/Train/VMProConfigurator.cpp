@@ -131,6 +131,7 @@ void VMProConfigurator::onDeviceReply(const QLowEnergyCharacteristic &c,
             emit logMessage(tr("Calibration Progress: %1 %").arg(data));
             break;
         case VM_BLE_ERROR:
+            onIncomingError(data);
             emit logMessage(VMProErrorToStringHelper::errorDescription(data));
             break;
         case VM_BLE_SET_VO2_REPORT_MODE:
@@ -304,4 +305,97 @@ void VMProConfigurator::startCalibration()
         cmd.append(VM_STATE_CALIB);
         m_service->writeCharacteristic(m_comInChar, cmd);
     }
+}
+
+void VMProConfigurator::onIncomingError(int errorCode)
+{
+    // Only a few of the possible error are worth forwarding to the notification area
+    switch(errorCode)
+    {
+    //VM_ERROR_FATAL
+    case (VMProErrorToStringHelper::FatalErrorOffset + 0):        //VM_FATAL_ERROR_NONE
+        emit setNotification(tr("No Error."), 5);
+    case (VMProErrorToStringHelper::FatalErrorOffset + 2):        //VM_FATAL_ERROR_TOO_HOT
+        emit setNotification(tr("Too hot, shutting off."), 5);
+    case (VMProErrorToStringHelper::FatalErrorOffset + 3):        //VM_FATAL_ERROR_TOO_COLD
+        emit setNotification(tr("Too cold, shutting off."), 5);
+    case (VMProErrorToStringHelper::FatalErrorOffset + 4):        //VM_FATAL_ERROR_IDLE_TIMEOUT
+        emit setNotification(tr("Sat idle too long, shutting off."), 5);
+    case (VMProErrorToStringHelper::FatalErrorOffset + 5):        //VM_FATAL_ERROR_DEAD_BATTERY_LBO_V
+    case (VMProErrorToStringHelper::FatalErrorOffset + 6):        //VM_FATAL_ERROR_DEAD_BATTERY_SOC
+    case (VMProErrorToStringHelper::FatalErrorOffset + 7):        //VM_FATAL_ERROR_DEAD_BATTERY_STARTUP
+        emit setNotification(tr("Battery is out of charge, shutting off."), 5);
+    case (VMProErrorToStringHelper::FatalErrorOffset + 8):        //VM_FATAL_ERROR_BME_NO_INIT
+        emit setNotification(tr("Failed to initialize environmental sensor.\n Send unit in for service."), 5);
+    case (VMProErrorToStringHelper::FatalErrorOffset + 9):        //VM_FATAL_ERROR_ADS_NO_INIT
+        emit setNotification(tr("Failed to initialize oxygen sensor.\n Send unit in for service."), 5);
+    case (VMProErrorToStringHelper::FatalErrorOffset + 10):        //VM_FATAL_ERROR_AMS_DISCONNECTED
+        emit setNotification(tr("Failed to initialize flow sensor.\n Send unit in for service."), 5);
+    case (VMProErrorToStringHelper::FatalErrorOffset + 11):        //VM_FATAL_ERROR_TWI_NO_INIT
+        emit setNotification(tr("Failed to initialize sensor communication.\n Send unit in for service."), 5);
+    case (VMProErrorToStringHelper::FatalErrorOffset + 12):        //VM_FATAL_ERROR_FAILED_FLASH_WRITE
+        emit setNotification(tr("Failed to write a page to flash memory.\n Send unit in for service."), 5);
+    case (VMProErrorToStringHelper::FatalErrorOffset + 13):        //VM_FATAL_ERROR_FAILED_FLASH_ERASE
+        emit setNotification(tr("Failed to erase a page from flash memory.\n Send unit in for service."), 5);
+
+    //VM_ERROR_WARN
+    case (VMProErrorToStringHelper::WarningErrorOffset + 1):      //VM_WARN_ERROR_MASK_LEAK
+        emit setNotification(tr("Mask leak detected."), 5);
+    case (VMProErrorToStringHelper::WarningErrorOffset + 2):      //VM_WARN_ERROR_VENTURI_TOO_SMALL
+        emit setNotification(tr("User piece too small."), 5);
+    case (VMProErrorToStringHelper::WarningErrorOffset + 3):      //VM_WARN_ERROR_VENTURI_TOO_BIG
+        emit setNotification(tr("User piece too big."), 5);
+    case (VMProErrorToStringHelper::WarningErrorOffset + 4):      //VM_WARN_ERROR_TOO_HOT
+        emit setNotification(tr("Device very hot."), 3);
+    case (VMProErrorToStringHelper::WarningErrorOffset + 5):      //VM_WARN_ERROR_TOO_COLD
+        emit setNotification(tr("Device very cold."), 3);
+    case (VMProErrorToStringHelper::WarningErrorOffset + 6):      //VM_WARN_ERROR_UNDER_BREATHING_VALVE
+        emit setNotification(tr("Breathing less than valve trigger."), 3);
+    case (VMProErrorToStringHelper::WarningErrorOffset + 7):      //VM_WARN_ERROR_O2_TOO_HUMID
+        emit setNotification(tr("Oxygen sensor too humid."), 3);
+    case (VMProErrorToStringHelper::WarningErrorOffset + 8):      //VM_WARN_ERROR_O2_TOO_HUMID_END
+        emit setNotification(tr("Oxygen sensor dried."), 3);
+    case (VMProErrorToStringHelper::WarningErrorOffset + 9):      //VM_WARN_ERROR_BREATHING_DURING_DIFFP_CALIB
+        emit setNotification(tr("Breathing during ambient calibration.\n Hold your breath for 5 seconds."), 5);
+    case (VMProErrorToStringHelper::WarningErrorOffset + 10):     //VM_WARN_ERROR_TOO_MANY_CONSECUTIVE_BREATHS_REJECTED
+        emit setNotification(tr("Many breaths rejected."), 3);
+    case (VMProErrorToStringHelper::WarningErrorOffset + 11):     //VM_WARN_ERROR_LOW_BATTERY_VOLTAGE
+        emit setNotification(tr("Low battery."), 3);
+    case (VMProErrorToStringHelper::WarningErrorOffset + 12):     //VM_WARN_ERROR_THERMAL_SHOCK_BEGIN
+        emit setNotification(tr("Thermal change occurring."), 3);
+    case (VMProErrorToStringHelper::WarningErrorOffset + 13):     //VM_WARN_ERROR_THERMAL_SHOCK_END
+        emit setNotification(tr("Thermal change slowed."), 3);
+    case (VMProErrorToStringHelper::WarningErrorOffset + 14):     //VM_WARN_ERROR_FINAL_VE_OUT_OF_RANGE
+        emit setNotification(tr("Ventilation out of range."), 3);
+
+    //VM_ERROR_O2_RECALIB
+    case (VMProErrorToStringHelper::O2CalibrationErrorOffset + 1):    //VM_O2_RECALIB_DRIFT
+        emit setNotification(tr("O2 sensor signal drifted."), 3);
+    case (VMProErrorToStringHelper::O2CalibrationErrorOffset + 2):    //VM_O2_RECALIB_PRESSURE_DRIFT
+        emit setNotification(tr("Ambient pressure changed a lot."), 3);
+    case (VMProErrorToStringHelper::O2CalibrationErrorOffset + 3):    //VM_O2_RECALIB_TEMPERATURE_DRIFT
+        emit setNotification(tr("Temperature changed a lot."), 3);
+    case (VMProErrorToStringHelper::O2CalibrationErrorOffset + 4):    //VM_O2_RECALIB_TIME_MAX
+        emit setNotification(tr("Maximum time between calibrations reached."), 3);
+    case (VMProErrorToStringHelper::O2CalibrationErrorOffset + 5):    //VM_O2_RECALIB_TIME_5MIN
+        emit setNotification(tr("5 minute recalibration."), 3);
+    case (VMProErrorToStringHelper::O2CalibrationErrorOffset + 6):    //VM_O2_RECALIB_REASON_THERMAL_SHOCK_OVER
+        emit setNotification(tr("Post-thermal shock calibration."), 3);
+
+    //VM_ERROR_DIAG
+    case (VMProErrorToStringHelper::DiagnosticErrorOffset + 0):       //VM_DIAG_ERROR_FLOW_DELAY_RESET
+        emit setNotification(tr("Calibration: waiting for user to start breathing."), 5);
+    case (VMProErrorToStringHelper::DiagnosticErrorOffset + 19):       //VM_DIAG_ERROR_CALIB_ADC_THEO_DIFF_MINIMUM
+        emit setNotification(tr("Calib diff: minimum."), 3);
+    case (VMProErrorToStringHelper::DiagnosticErrorOffset + 20):       //VM_DIAG_ERROR_CALIB_ADC_THEO_DIFF_SMALL
+        emit setNotification(tr("Calib diff: small."), 3);
+    case (VMProErrorToStringHelper::DiagnosticErrorOffset + 21):       //VM_DIAG_ERROR_CALIB_ADC_THEO_DIFF_MEDIUM
+        emit setNotification(tr("Calib diff: medium."), 3);
+    case (VMProErrorToStringHelper::DiagnosticErrorOffset + 22):       //VM_DIAG_ERROR_CALIB_ADC_THEO_DIFF_LARGE
+        emit setNotification(tr("Calib diff: large."), 3);
+
+    default:
+         break;
+    }
+
 }
